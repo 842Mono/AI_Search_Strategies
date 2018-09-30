@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 
-import sun.awt.X11.Visual;
-
 public class SaveWesteros extends GenericSearchProblem
 {	
 	static Cell[][] grid;
@@ -69,7 +67,7 @@ public class SaveWesteros extends GenericSearchProblem
 		
 		grid = new Cell[m][n];
 		
-		grid[m-1][n-1] = new Cell(CellType.PLAYER);
+		//grid[m-1][n-1] = new Cell(CellType.PLAYER);
 		
 		int dsl = (int)(Math.random()*(m*n - 1));
 		int x = dsl/m;
