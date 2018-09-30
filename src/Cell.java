@@ -1,5 +1,10 @@
 
-public enum Cell
+public class Cell
 {
-	EMPTY, OBSTACLE, WHITE_WALKER, DRAGON_STONE;
+	CellType type;
+	
+	public Cell(CellType type)
+	{
+		this.type = type;
+	}
 }

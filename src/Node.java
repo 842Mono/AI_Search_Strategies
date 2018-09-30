@@ -5,27 +5,12 @@ import java.awt.Point;
 public class Node
 {
 	Node parent;
-	Point position;
-	Action operator;
-	Orientation orientation;
-	int dragonstones;
-	int remainingWW;
+	Operator operator; //how this node was reached.
+	int totalCost = 0;
 	
-	public Node
-	(
-		Node parent, 
-		Point position,
-		Action operator, 
-		Orientation orientation, 
-		int dragonstones, 
-		int remainingWW
-	)
+	public Node(Node parent, Operator operator)
 	{
 		this.parent = parent;
-		this.position = position;
 		this.operator = operator;
-		this.orientation = orientation;
-		this.dragonstones = dragonstones;
-		this.remainingWW = remainingWW;
 	}
 }
