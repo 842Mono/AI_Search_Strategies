@@ -1,0 +1,5 @@
+
+public enum Cell
+{
+	EMPTY, OBSTACLE, WHITE_WALKER, DRAGON_STONE;
+}
