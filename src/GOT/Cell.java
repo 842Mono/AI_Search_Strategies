@@ -1,7 +1,8 @@
+package GOT;
 
 public class Cell
 {
-	CellType type;
+	public CellType type;
 	
 	public Cell(CellType type)
 	{

@@ -1,3 +1,5 @@
+package GOT;
+import Generic.Operator;
 
 public enum Action implements Operator
 {

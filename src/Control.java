@@ -1,5 +1,9 @@
 import java.util.ArrayList;
 
+import GOT.Action;
+import GOT.SaveWesteros;
+import GOT.State;
+
 public class Control
 {
 	//static Cell[][] grid;
@@ -13,13 +17,16 @@ public class Control
 		//Cell[][] grid = genGrid();
 		
 //		Node eneshyal = new GOTNode(null, null, );
-		ArrayList<Action> ops = new ArrayList<Action>();
-		ops.add(Action.FORWARD);
-		ops.add(Action.ROTATE_RIGHT);
-		ops.add(Action.ROTATE_LEFT);
-		ops.add(Action.KILL);
+//		ArrayList<Action> ops = new ArrayList<Action>();
+//		ops.add(Action.FORWARD);
+//		ops.add(Action.ROTATE_RIGHT);
+//		ops.add(Action.ROTATE_LEFT);
+//		ops.add(Action.KILL);
 		
 		//SaveWesteros test1 = new SaveWesteros(eneshyal, ops);
+		
+		SaveWesteros t1 = new SaveWesteros();
+		System.out.println("hena");
 	}
 	
 
