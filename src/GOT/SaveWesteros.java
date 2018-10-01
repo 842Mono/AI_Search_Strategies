@@ -15,28 +15,17 @@ public class SaveWesteros extends GenericSearchProblem
 	public static int inventory;
 	public static State player;
 	
-	public static void main(String [] args)
-	{
-//		genGrid();
-//		genPlayer();
-//		visualizeGrid(grid);
-	}
-	
-	
 	public SaveWesteros()
 	{
-//		genGrid();
-//		genPlayer();
-//		visualizeGrid(grid);
 		genGridStatic();
 		visualizeGrid(grid);
 		
 		ArrayList<Node> firstState = new ArrayList<Node>();
 		firstState.add(genPlayer());
 		ArrayList<Operator> actions = new ArrayList<Operator>();
-		actions.add(Action.FORWARD);
-		actions.add(Action.ROTATE_LEFT);
 		actions.add(Action.KILL);
+		actions.add(Action.ROTATE_LEFT);
+		actions.add(Action.FORWARD);
 		actions.add(Action.ROTATE_RIGHT);
 		this.initValues(firstState, actions, QueuingFunction.BREADTH_FIRST_SEARCH);
 		
@@ -71,6 +60,7 @@ public class SaveWesteros extends GenericSearchProblem
 		
 		switch(action)
 		{
+			
 			case FORWARD:
 				switch(state.orientation)
 				{
@@ -117,9 +107,9 @@ public class SaveWesteros extends GenericSearchProblem
 					state.dragonStones,
 					state.remainingWW
 				);
-				
 				break;
-			case KILL: resultantState = kill(state); break;
+			case KILL:
+				resultantState = kill(state); break;
 			default: throw new Error("offf");
 		}
 		
@@ -128,7 +118,6 @@ public class SaveWesteros extends GenericSearchProblem
 	
 	public State kill(State currentState)
 	{
-		System.out.println("gh hna");
 		if(currentState.dragonStones == 0)
 			return null;
 		else 
@@ -138,6 +127,13 @@ public class SaveWesteros extends GenericSearchProblem
 				return null;
 			else 
 			{
+				int cost = currentState.remainingWW.size() - killed.size();
+				switch(cost)
+				{
+					case 1: cost = 4; break;
+					case 2: cost = 2; break;
+					case 3: cost = 1; break;
+				}
 				return new State
 				(
 					currentState,
@@ -146,6 +142,7 @@ public class SaveWesteros extends GenericSearchProblem
 					currentState.orientation,
 					currentState.dragonStones - 1,
 					killed
+//					currentState.totalCost + cost
 				);
 			}
 		}
@@ -171,6 +168,7 @@ public class SaveWesteros extends GenericSearchProblem
 				Orientation.NORTH,
 				inventory,
 				currentState.remainingWW
+//				currentState.totalCost
 			);
 		
 		return new State
@@ -181,6 +179,7 @@ public class SaveWesteros extends GenericSearchProblem
 			Orientation.NORTH,
 			currentState.dragonStones,
 			currentState.remainingWW
+//			currentState.totalCost
 		);
 	}
 
@@ -204,6 +203,7 @@ public class SaveWesteros extends GenericSearchProblem
 				Orientation.SOUTH,
 				inventory,
 				currentState.remainingWW
+//				currentState.totalCost
 			);
 		
 		return new State
@@ -214,6 +214,7 @@ public class SaveWesteros extends GenericSearchProblem
 			Orientation.SOUTH,
 			currentState.dragonStones,
 			currentState.remainingWW
+//			currentState.totalCost
 		);
 	}
 	
@@ -237,6 +238,7 @@ public class SaveWesteros extends GenericSearchProblem
 				Orientation.EAST,
 				inventory,
 				currentState.remainingWW
+//				currentState.totalCost
 			);
 		
 		return new State
@@ -247,6 +249,7 @@ public class SaveWesteros extends GenericSearchProblem
 			Orientation.EAST,
 			currentState.dragonStones,
 			currentState.remainingWW
+//			currentState.totalCost
 		);
 	}
 	
@@ -261,7 +264,8 @@ public class SaveWesteros extends GenericSearchProblem
 		if(grid[newMove][currentState.getY()].type == CellType.WHITE_WALKER
 				&& currentState.walkerIsAlive(newMove, currentState.getY()))
 			return null;
-		if(grid[newMove][currentState.getY()].type == CellType.DRAGON_STONE)
+		if(grid[newMove][currentState.getY()].type == CellType.DRAGON_STONE) 
+		{
 			return new State
 			(
 				currentState,
@@ -270,7 +274,9 @@ public class SaveWesteros extends GenericSearchProblem
 				Orientation.WEST,
 				inventory,
 				currentState.remainingWW
+//				currentState.totalCost
 			);
+		}
 		
 		return new State
 		(
@@ -280,6 +286,7 @@ public class SaveWesteros extends GenericSearchProblem
 			Orientation.WEST,
 			currentState.dragonStones,
 			currentState.remainingWW
+//			currentState.totalCost
 		);
 	}
 	
@@ -290,8 +297,11 @@ public class SaveWesteros extends GenericSearchProblem
 		if(node instanceof State)
 			state = (State)node;
 		//System.out.println(state.remainingWW.size());
-		if(state.remainingWW.size() == 0)
+		if(state.remainingWW.size() == 0) 
+		{
+			System.out.println("trueeee");
 			return true;
+		}
 		return false;
 	}
 	
@@ -315,6 +325,31 @@ public class SaveWesteros extends GenericSearchProblem
 	@Override
 	public int pathCostFunction(Node node, Operator operator)
 	{
+		//typecasting
+		Action action = null;
+		State state  = null;
+		State parent = null;
+		if(operator instanceof Action) 
+			action = (Action) operator;
+		if(node instanceof State) 
+			state =  (State) node;
+		if(node.parent instanceof State)
+			parent = (State) node.parent;
+		
+		switch(action)
+		{
+			case KILL: 
+				if(parent.remainingWW.size() - state.remainingWW.size() == 1)
+					return 4;
+				if(parent.remainingWW.size() - state.remainingWW.size() == 2)
+					return 2;
+				if(parent.remainingWW.size() - state.remainingWW.size() == 3)
+					return 1;			
+				break;
+			case FORWARD: return 5; 
+			case ROTATE_LEFT: return 5; 
+			case ROTATE_RIGHT: return 5;
+		}
 		return 0;
 	}
 	

@@ -26,7 +26,7 @@ public class Control
 		//SaveWesteros test1 = new SaveWesteros(eneshyal, ops);
 		
 		SaveWesteros t1 = new SaveWesteros();
-		System.out.println("hena");
+//		System.out.println("hena");
 	}
 	
 

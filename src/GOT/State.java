@@ -22,13 +22,14 @@ public class State extends Node
 		Orientation orientation,
 		int dragonStones,
 		ArrayList<Point> remainingWW
+//		int pathCost
 	)
 	{
-		super(parent, operator);
+		super(parent, operator, 0, 0);
 		this.position = position;
 		this.orientation = orientation;
 		this.dragonStones = dragonStones;
-		this.remainingWW = remainingWW;//new ArrayList<Point>();
+		this.remainingWW = remainingWW;
 	}
 	
 	public int getX()

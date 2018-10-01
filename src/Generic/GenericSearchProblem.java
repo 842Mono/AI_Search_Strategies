@@ -25,7 +25,7 @@ public abstract class GenericSearchProblem
 			switch(queuingFunction)
 			{
 				case BREADTH_FIRST_SEARCH: resultantNode = breadthFirstSearch(queue, operators); break;
-				case DEPTH_FIRST_SEARCH: break;
+				case DEPTH_FIRST_SEARCH:resultantNode = DepthFirstSearch(queue, operators); break;
 				case UNIFORM_COST_SEARCH: break;
 				case GREEDY_SEARCH: break;
 				case ITERATIVE_DEEPENING: break;
@@ -44,31 +44,53 @@ public abstract class GenericSearchProblem
 		{
 			Node child = stateSpace(firstNode, operators.get(i));
 			if(child != null)
+			{
+				System.out.println(this.pathCostFunction(child, operators.get(i)));
 				queue.add(child);
+			}
 		}
-//		for (int i = 0; i < queue.size(); i++)
-//		{
-//			System.out.println(i);
-//		}
+
+		return queue;
+	}
+	
+	private ArrayList<Node> DepthFirstSearch(ArrayList<Node> queue, ArrayList<Operator> operators)
+	{
+		Node firstNode = queue.remove(0);
+//		System.out.println(operators.size());
+		for(int i = 0; i < operators.size(); i++)
+		{
+			Node child = stateSpace(firstNode, operators.get(i));
+			if(child != null)
+			{
+				System.out.println(this.pathCostFunction(child, operators.get(i)));
+				queue.add(0,child);
+			}
+		}
 		return queue;
 	}
 	
 	public void work() 
 	{
-		boolean mkhlsnash = true;
-		while(mkhlsnash)
+		while(true)
 		{
+			if(queue.size() == 0)
+			{
+				System.out.println("No solution");
+				break;
+			}
 			if(this.goalTest(queue.get(0)))
 				break;
 			expand(this.queue, this.operators, this.queuingFunction);
 		}
-		this.backtrack(queue.get(0));
+		if(queue.size() != 0)
+			this.backtrack(queue.get(0));
 	}
 	
 	public void backtrack(Node node)
 	{
 		if(node != null)
 		{
+			//System.out.println();
 			System.out.println(node.operator +" operator");
 			this.backtrack(node.parent);
 		}
