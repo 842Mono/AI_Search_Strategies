@@ -1,5 +1,6 @@
 package GOT;
 import java.awt.Point;
+import java.rmi.dgc.Lease;
 import java.util.ArrayList;
 
 import Generic.GenericSearchProblem;
@@ -30,7 +31,7 @@ public class SaveWesteros extends GenericSearchProblem
 		this.initValues(firstState, actions);
 		
 		//this.search(grid, QueuingFunction.BREADTH_FIRST_SEARCH, true);
-		this.search(QueuingFunction.GREEDY_SEARCH, true);
+		this.search(QueuingFunction.UNIFORM_COST_SEARCH, true);
 	}
 	
 	public SaveWesteros(Node initial, ArrayList<Operator> operators)
@@ -237,6 +238,7 @@ public class SaveWesteros extends GenericSearchProblem
 		return heuristic;
 	}
 	
+		
 	public int estimateHeuristic2(Node node)
 	{
 		//type casting
@@ -250,13 +252,9 @@ public class SaveWesteros extends GenericSearchProblem
 		int posx = state.getX();
 		int posy = state.getY();
 		
-//		ArrayList<Point> threeKills = new ArrayList<Point>();
-//		ArrayList<Point> twoKills = new ArrayList<Point>();
-//		ArrayList<Point> oneKill = new ArrayList<Point>();
 		
-		int heuristic = 0;
+		int heuristic1 = 0;
 		
-		int dx, dy;
 		if(state.dragonStones == 0)
 		{
 			for(int i = 0; i < m; ++i)
@@ -264,43 +262,43 @@ public class SaveWesteros extends GenericSearchProblem
 				for(int j = 0; j < n; ++j)
 				{
 					if(grid[i][j].type == CellType.DRAGON_STONE)
-					{
-						dx = i;
-						dy = j;
+					{	
+						int leastx = Math.abs(i - posx); //if -ve then west
+						int leasty = Math.abs(j - posy); //if -ve then north
+						if( (leastx < 0 && state.orientation == Orientation.EAST) ||
+								(leasty < 0 && state.orientation == Orientation.SOUTH) )
+								heuristic1 += 5;
+						heuristic1 += (Math.abs(i - posx) + Math.abs(j - posy))*5;
+						break;
 					}
+					
 					
 				}
 			}
-			//TODO: complete
+			
+			
+			
 		}
 		else
 		{
-			for(int i = 0; i < state.remainingWW.size(); ++i)
-			{
-				int comparisonHeuristic = 0;
-				int leastx = Math.abs(state.remainingWW.get(i).x - posx); //if -ve then west
-				int leasty = Math.abs(state.remainingWW.get(i).y - posy); //if -ve then north
-				if( (leastx < 0 && state.orientation == Orientation.EAST) ||
-					(leasty < 0 && state.orientation == Orientation.SOUTH) )
-					comparisonHeuristic += 5;
-				
-				comparisonHeuristic += Math.abs(state.remainingWW.get(i).x - posx) + Math.abs(state.remainingWW.get(i).y - posy);
-				
-				if(i == 0)
-					heuristic = comparisonHeuristic;
-				else
-					if(comparisonHeuristic < heuristic)
-						heuristic = comparisonHeuristic;
-			}
+			double leastNumberDragonGlasses = Math.ceil(state.remainingWW.size() / 3.0); 
+			heuristic1 = (int) leastNumberDragonGlasses;
+			
 		}
 		
-		heuristic *= 5;
-		
-		//if no dragon glass estimate distance to dragon stone
-		
-		//if dragon glass estimate distance to best kill
-		return 0;
-	}
+		if
+		(
+			   (state.operator == Action.ROTATE_LEFT || state.operator == Action.ROTATE_RIGHT)
+			&& ((state.parent != null)
+			&& (state.parent.operator == Action.ROTATE_LEFT || state.parent.operator == Action.ROTATE_RIGHT))
+			&& ((state.parent.parent != null)
+			&& (state.parent.parent.operator == Action.ROTATE_LEFT || state.parent.parent.operator == Action.ROTATE_RIGHT))
+		)
+			heuristic1 += 6;
+		return heuristic1;
+	
+
+}
 	
 	public State kill(State currentState)
 	{

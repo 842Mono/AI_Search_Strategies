@@ -79,7 +79,7 @@ public abstract class GenericSearchProblem
 	
 	private void greedySearch(ArrayList<Node> queue, ArrayList<Operator> operators)
 	{
-		Node firstNode = queue.remove(0); System.out.println(firstNode.operator);
+		Node firstNode = queue.remove(0);
 		
 		for(int i = 0; i < operators.size(); ++i)
 		{
@@ -92,7 +92,20 @@ public abstract class GenericSearchProblem
 	
 	private void aStarSearch(ArrayList<Node> queue, ArrayList<Operator> operators)
 	{
-		
+			Node firstNode = queue.remove(0);
+			
+			for(int i = 0; i < operators.size(); ++i)
+			{
+				Node child = stateSpace(firstNode, operators.get(i));
+				if(child != null)
+				{
+					if(child.parent != null)
+						child.totalCost = child.parent.totalCost;
+					child.totalCost += this.pathCostFunction(child, operators.get(i));
+					queue.add(child);
+				}
+			}
+			queue.sort((o1, o2) -> o1.heuristic + o1.totalCost < o2.heuristic + o2.totalCost ? -1 : 1);
 	}
 	
 	public ResultObject search(QueuingFunction strategy, boolean visualize)
