@@ -209,7 +209,7 @@ public class SaveWesteros extends GenericSearchProblem
 					heuristic = comparisonHeuristic;
 		}
 		
-		heuristic *= 5;
+		heuristic *= 3;
 		
 		
 //		if
