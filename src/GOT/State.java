@@ -21,11 +21,12 @@ public class State extends Node
 		Point position,
 		Orientation orientation,
 		int dragonStones,
-		ArrayList<Point> remainingWW
-//		int pathCost
+		ArrayList<Point> remainingWW,
+		int depth
+//		int heuristic
 	)
 	{
-		super(parent, operator, 0, 0);
+		super(parent, operator, 0, depth);
 		this.position = position;
 		this.orientation = orientation;
 		this.dragonStones = dragonStones;
@@ -72,7 +73,7 @@ public class State extends Node
 				((int)currentPoint.getX() == x && (int)currentPoint.getY() == y - 1) ||
 				((int)currentPoint.getX() == x && (int)currentPoint.getY() == y + 1)
 			)
-				newArrayList.remove(i);
+				newArrayList.remove(i--);
 		}
 		
 		return newArrayList;
