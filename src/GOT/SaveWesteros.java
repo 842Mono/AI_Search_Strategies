@@ -18,7 +18,7 @@ public class SaveWesteros extends GenericSearchProblem
 	
 	public SaveWesteros()
 	{
-		genGridStatic();
+		genGrid();
 		visualizeGrid(grid);
 		
 		ArrayList<Node> firstState = new ArrayList<Node>();
@@ -31,7 +31,7 @@ public class SaveWesteros extends GenericSearchProblem
 		this.initValues(firstState, actions);
 		
 		//this.search(grid, QueuingFunction.BREADTH_FIRST_SEARCH, true);
-		this.search(QueuingFunction.UNIFORM_COST_SEARCH, true);
+		this.search(QueuingFunction.ITERATIVE_DEEPENING, true);
 	}
 	
 	public SaveWesteros(Node initial, ArrayList<Operator> operators)
@@ -532,7 +532,7 @@ public class SaveWesteros extends GenericSearchProblem
 		{
 			for(int j = 0; j < n; j++)
 			{
-				switch(g[i][j].type)
+				switch(g[j][i].type)
 				{
 					case EMPTY: System.out.print("[O]"); break;
 					case WHITE_WALKER: System.out.print("[W]"); break;
