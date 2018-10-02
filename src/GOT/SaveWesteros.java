@@ -31,7 +31,7 @@ public class SaveWesteros extends GenericSearchProblem
 		this.initValues(firstState, actions);
 		
 		//this.search(grid, QueuingFunction.BREADTH_FIRST_SEARCH, true);
-		this.search(QueuingFunction.A_STAR, true);
+		this.search(QueuingFunction.ITERATIVE_DEEPENING, true);
 	}
 	
 	public SaveWesteros(Node initial, ArrayList<Operator> operators)
