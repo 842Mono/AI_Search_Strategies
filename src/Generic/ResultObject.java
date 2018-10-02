@@ -14,6 +14,10 @@ public class ResultObject
 	@Override
 	public String toString()
 	{
-		return operators.toString() + " " + this.cost + " " + this.numberOfNodes;
+		ArrayList<Operator> result = new ArrayList<Operator>();
+		for(int i =1; i<operators.size(); i++) {
+	       result.add(operators.get(i));
+	    }
+		return result.toString() + " " + this.cost + " " + this.numberOfNodes;
 	}
 }

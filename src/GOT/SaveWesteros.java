@@ -118,7 +118,7 @@ public class SaveWesteros extends GenericSearchProblem
 		}
 		
 		if(resultantState != null)
-			resultantState.heuristic = estimateHeuristic2(resultantState);
+			resultantState.heuristic = estimateHeuristic1(resultantState);
 		
 		return resultantState;
 	}
