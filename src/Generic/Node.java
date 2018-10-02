@@ -1,13 +1,12 @@
 package Generic;
 
-//import Action;
-
 public class Node
 {
 	public Node parent;
-	Operator operator; //how this node was reached.
+	public Operator operator; //how this node was reached.
 	public int totalCost;
 	public int depth;
+	public int heuristic;
 	
 	public Node() {}
 	
@@ -17,5 +16,6 @@ public class Node
 		this.operator = operator;
 		this.totalCost = cost;
 		this.depth = depth;
+		this.heuristic = 0;
 	}
 }

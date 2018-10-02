@@ -9,11 +9,11 @@ import Generic.QueuingFunction;
 
 public class SaveWesteros extends GenericSearchProblem
 {
-	public static Cell[][] grid;
-	public static int m;
-	public static int n;
-	public static int inventory;
-	public static State player;
+	Cell[][] grid;
+	int m;
+	int n;
+	int inventory;
+	State player;
 	
 	public SaveWesteros()
 	{
@@ -27,9 +27,10 @@ public class SaveWesteros extends GenericSearchProblem
 		actions.add(Action.ROTATE_LEFT);
 		actions.add(Action.FORWARD);
 		actions.add(Action.ROTATE_RIGHT);
-		this.initValues(firstState, actions, QueuingFunction.BREADTH_FIRST_SEARCH);
+		this.initValues(firstState, actions);
 		
-		this.work();
+		//this.search(grid, QueuingFunction.BREADTH_FIRST_SEARCH, true);
+		this.search(QueuingFunction.GREEDY_SEARCH, true);
 	}
 	
 	public SaveWesteros(Node initial, ArrayList<Operator> operators)
@@ -86,7 +87,8 @@ public class SaveWesteros extends GenericSearchProblem
 					state.getPositionObject(),
 					newOrientation,
 					state.dragonStones,
-					state.remainingWW
+					state.remainingWW,
+					state.depth+1
 				);
 				break;
 			case ROTATE_RIGHT:
@@ -105,7 +107,8 @@ public class SaveWesteros extends GenericSearchProblem
 					state.getPositionObject(),
 					newOrientation,
 					state.dragonStones,
-					state.remainingWW
+					state.remainingWW,
+					state.depth+1
 				);
 				break;
 			case KILL:
@@ -113,7 +116,190 @@ public class SaveWesteros extends GenericSearchProblem
 			default: throw new Error("offf");
 		}
 		
+		if(resultantState != null)
+			resultantState.heuristic = estimateHeuristicGreedy(resultantState);
+		
 		return resultantState;
+	}
+	
+	public int estimateHeuristicGreedy(Node node)
+	{
+		//type casting
+		State state = null;
+		if(node instanceof State)
+			state = (State)node;
+		
+		if(state.remainingWW.size() == 0)
+			return 0;
+		
+		int posx = state.getX();
+		int posy = state.getY();
+		
+//		ArrayList<Point> threeKills = new ArrayList<Point>();
+//		ArrayList<Point> twoKills = new ArrayList<Point>();
+//		ArrayList<Point> oneKill = new ArrayList<Point>();
+		
+		int heuristic = 0;
+		for(int i = 0; i < state.remainingWW.size(); ++i)
+		{
+			int comparisonHeuristic = 0;
+			int leastx = Math.abs(state.remainingWW.get(i).x - posx); //if -ve then west
+			int leasty = Math.abs(state.remainingWW.get(i).y - posy); //if -ve then north
+			if( (leastx < 0 && state.orientation == Orientation.EAST) ||
+				(leasty < 0 && state.orientation == Orientation.SOUTH) )
+				comparisonHeuristic += 5;
+			
+			comparisonHeuristic += Math.abs(state.remainingWW.get(i).x - posx) + Math.abs(state.remainingWW.get(i).y - posy);
+			
+			if(i == 0)
+				heuristic = comparisonHeuristic;
+			else
+				if(comparisonHeuristic < heuristic)
+					heuristic = comparisonHeuristic;
+		}
+		
+		heuristic *= 5;
+		
+		if
+		(
+			   (state.operator == Action.ROTATE_LEFT || state.operator == Action.ROTATE_RIGHT)
+			&& (state.parent != null
+			&& (state.parent.operator == Action.ROTATE_LEFT || state.parent.operator == Action.ROTATE_RIGHT))
+		)
+			heuristic += 6;
+		
+		return heuristic;
+	}
+	
+//	@Override
+	public int estimateHeuristic1(Node node)
+	{
+		//type casting
+		State state = null;
+		if(node instanceof State)
+			state = (State)node;
+		
+		if(state.remainingWW.size() == 0)
+			return 0;
+		
+		int posx = state.getX();
+		int posy = state.getY();
+		
+//		ArrayList<Point> threeKills = new ArrayList<Point>();
+//		ArrayList<Point> twoKills = new ArrayList<Point>();
+//		ArrayList<Point> oneKill = new ArrayList<Point>();
+		
+		int heuristic = 0;
+		for(int i = 0; i < state.remainingWW.size(); ++i)
+		{
+			int comparisonHeuristic = 0;
+			int leastx = Math.abs(state.remainingWW.get(i).x - posx); //if -ve then west
+			int leasty = Math.abs(state.remainingWW.get(i).y - posy); //if -ve then north
+			if( (leastx < 0 && state.orientation == Orientation.EAST) ||
+				(leasty < 0 && state.orientation == Orientation.SOUTH) )
+				comparisonHeuristic += 5;
+			
+			comparisonHeuristic += Math.abs(state.remainingWW.get(i).x - posx) + Math.abs(state.remainingWW.get(i).y - posy);
+			
+			if(i == 0)
+				heuristic = comparisonHeuristic;
+			else
+				if(comparisonHeuristic < heuristic)
+					heuristic = comparisonHeuristic;
+		}
+		
+		heuristic *= 5;
+		
+		
+//		if
+//		(
+//			   (state.operator == Action.ROTATE_LEFT || state.operator == Action.ROTATE_RIGHT)
+//			&& (state.parent != null
+//			&& (state.parent.operator == Action.ROTATE_LEFT || state.parent.operator == Action.ROTATE_RIGHT))
+//			&& (state.parent.parent != null
+//			&& (state.parent.parent.operator == Action.ROTATE_LEFT || state.parent.parent.operator == Action.ROTATE_RIGHT))
+//		)
+//			heuristic += 25;
+		
+//		if
+//		(
+//			(state.operator == Action.ROTATE_LEFT && state.parent != null && state.parent.operator == Action.ROTATE_RIGHT)
+//			|| (state.operator == Action.ROTATE_RIGHT && state.parent != null && state.parent.operator == Action.ROTATE_LEFT)
+//		)
+//			heuristic += 100;
+//		if
+//		(
+//			(state.operator == Action.ROTATE_LEFT && state.parent != null && state.parent.operator == Action.ROTATE_LEFT && state.parent.parent != null && state.parent.parent.operator == Action.ROTATE_LEFT)
+//			|| (state.operator == Action.ROTATE_RIGHT && state.parent != null && state.parent.operator == Action.ROTATE_RIGHT && state.parent.parent != null && state.parent.parent.operator == Action.ROTATE_RIGHT)
+//		)
+//			heuristic += 100;
+		
+		return heuristic;
+	}
+	
+	public int estimateHeuristic2(Node node)
+	{
+		//type casting
+		State state = null;
+		if(node instanceof State)
+			state = (State)node;
+		
+		if(state.remainingWW.size() == 0)
+			return 0;
+		
+		int posx = state.getX();
+		int posy = state.getY();
+		
+//		ArrayList<Point> threeKills = new ArrayList<Point>();
+//		ArrayList<Point> twoKills = new ArrayList<Point>();
+//		ArrayList<Point> oneKill = new ArrayList<Point>();
+		
+		int heuristic = 0;
+		
+		int dx, dy;
+		if(state.dragonStones == 0)
+		{
+			for(int i = 0; i < m; ++i)
+			{
+				for(int j = 0; j < n; ++j)
+				{
+					if(grid[i][j].type == CellType.DRAGON_STONE)
+					{
+						dx = i;
+						dy = j;
+					}
+					
+				}
+			}
+			//TODO: complete
+		}
+		else
+		{
+			for(int i = 0; i < state.remainingWW.size(); ++i)
+			{
+				int comparisonHeuristic = 0;
+				int leastx = Math.abs(state.remainingWW.get(i).x - posx); //if -ve then west
+				int leasty = Math.abs(state.remainingWW.get(i).y - posy); //if -ve then north
+				if( (leastx < 0 && state.orientation == Orientation.EAST) ||
+					(leasty < 0 && state.orientation == Orientation.SOUTH) )
+					comparisonHeuristic += 5;
+				
+				comparisonHeuristic += Math.abs(state.remainingWW.get(i).x - posx) + Math.abs(state.remainingWW.get(i).y - posy);
+				
+				if(i == 0)
+					heuristic = comparisonHeuristic;
+				else
+					if(comparisonHeuristic < heuristic)
+						heuristic = comparisonHeuristic;
+			}
+		}
+		
+		heuristic *= 5;
+		
+		//if no dragon glass estimate distance to dragon stone
+		
+		//if dragon glass estimate distance to best kill
+		return 0;
 	}
 	
 	public State kill(State currentState)
@@ -141,7 +327,8 @@ public class SaveWesteros extends GenericSearchProblem
 					currentState.getPositionObject(),
 					currentState.orientation,
 					currentState.dragonStones - 1,
-					killed
+					killed,
+					currentState.depth+1
 //					currentState.totalCost + cost
 				);
 			}
@@ -167,7 +354,8 @@ public class SaveWesteros extends GenericSearchProblem
 				new Point(currentState.getX(), newMove),
 				Orientation.NORTH,
 				inventory,
-				currentState.remainingWW
+				currentState.remainingWW,
+				currentState.depth+1
 //				currentState.totalCost
 			);
 		
@@ -178,7 +366,8 @@ public class SaveWesteros extends GenericSearchProblem
 			new Point(currentState.getX(), newMove),
 			Orientation.NORTH,
 			currentState.dragonStones,
-			currentState.remainingWW
+			currentState.remainingWW,
+			currentState.depth+1
 //			currentState.totalCost
 		);
 	}
@@ -202,7 +391,8 @@ public class SaveWesteros extends GenericSearchProblem
 				new Point(currentState.getX(), newMove),
 				Orientation.SOUTH,
 				inventory,
-				currentState.remainingWW
+				currentState.remainingWW,
+				currentState.depth+1
 //				currentState.totalCost
 			);
 		
@@ -213,7 +403,8 @@ public class SaveWesteros extends GenericSearchProblem
 			new Point(currentState.getX(), newMove),
 			Orientation.SOUTH,
 			currentState.dragonStones,
-			currentState.remainingWW
+			currentState.remainingWW,
+			currentState.depth+1
 //			currentState.totalCost
 		);
 	}
@@ -237,7 +428,8 @@ public class SaveWesteros extends GenericSearchProblem
 				new Point(newMove, currentState.getY()),
 				Orientation.EAST,
 				inventory,
-				currentState.remainingWW
+				currentState.remainingWW,
+				currentState.depth+1
 //				currentState.totalCost
 			);
 		
@@ -248,7 +440,8 @@ public class SaveWesteros extends GenericSearchProblem
 			new Point(newMove, currentState.getY()),
 			Orientation.EAST,
 			currentState.dragonStones,
-			currentState.remainingWW
+			currentState.remainingWW,
+			currentState.depth+1
 //			currentState.totalCost
 		);
 	}
@@ -273,7 +466,8 @@ public class SaveWesteros extends GenericSearchProblem
 				new Point(newMove, currentState.getY()),
 				Orientation.WEST,
 				inventory,
-				currentState.remainingWW
+				currentState.remainingWW,
+				currentState.depth+1
 //				currentState.totalCost
 			);
 		}
@@ -285,8 +479,9 @@ public class SaveWesteros extends GenericSearchProblem
 			new Point(newMove, currentState.getY()),
 			Orientation.WEST,
 			currentState.dragonStones,
-			currentState.remainingWW
-//			currentState.totalCost
+			currentState.remainingWW,
+//			currentState.totalCost,
+			currentState.depth+1
 		);
 	}
 	
@@ -297,31 +492,11 @@ public class SaveWesteros extends GenericSearchProblem
 		if(node instanceof State)
 			state = (State)node;
 		//System.out.println(state.remainingWW.size());
-		if(state.remainingWW.size() == 0) 
-		{
-			System.out.println("trueeee");
+		if(state.remainingWW.size() == 0)
 			return true;
-		}
 		return false;
 	}
-	
-//	@Override
-//	public ArrayList<Node> expand(Node node)
-//	{
-//		ArrayList<Node> results =  new ArrayList<Node>();
-//		State forwardState = stateSpace(node, Action.FORWARD);
-//		State rotateLeftState = stateSpace(node, Action.ROTATE_LEFT);
-//		State rotateRightState =  stateSpace(node, Action.ROTATE_RIGHT);
-//		State killState =  stateSpace(node, Action.KILL);
-//		
-//		results.add(killState);
-//		results.add(forwardState);
-//		results.add(rotateLeftState);
-//		results.add(rotateRightState);
-//		
-//		
-//		return null;
-//	}
+
 	@Override
 	public int pathCostFunction(Node node, Operator operator)
 	{
@@ -353,28 +528,25 @@ public class SaveWesteros extends GenericSearchProblem
 		return 0;
 	}
 	
-	public static void visualizeGrid(Cell[][] g)
+	public void visualizeGrid(Cell[][] g)
 	{
-		for(int i = 0; i <m; i++)
+		for(int i = 0; i < m; i++)
 		{
 			for(int j = 0; j < n; j++)
 			{
-				//System.out.println(g[i][j].type);
 				switch(g[i][j].type)
 				{
 					case EMPTY: System.out.print("[O]"); break;
 					case WHITE_WALKER: System.out.print("[W]"); break;
 					case OBSTACLE: System.out.print("[X]"); break;
 					case DRAGON_STONE: System.out.print("[D]"); break;
-//					case PLAYER: System.out.print("[P]"); break;
-					//default:System.out.println("gh hna");break;
 				}
 			}
 			System.out.println();
 		}
 	}
 	
-	public static void genGrid()
+	public void genGrid()
 	{
 		m = 4;
 		n = 4;
@@ -436,7 +608,7 @@ public class SaveWesteros extends GenericSearchProblem
 		}
 	}
 
-	public static State genPlayer() 
+	public State genPlayer() 
 	{
 		ArrayList<Point> wwPositions = new ArrayList<Point>();
 		for (int i = 0; i < m; i++) {
@@ -447,11 +619,13 @@ public class SaveWesteros extends GenericSearchProblem
 				}
 			}
 		}
-		return new State(null,null, new Point(m-1,n-1), Orientation.NORTH,0,wwPositions);
+		State s = new State(null,null, new Point(m-1,n-1), Orientation.NORTH,0,wwPositions,0);
+		s.heuristic = estimateHeuristicGreedy(s);
+		return s;
 	}
 	
 
-	public static void genGridStatic()
+	public void genGridStatic()
 	{
 		m = 4;
 		n = 4;
