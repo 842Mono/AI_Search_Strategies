@@ -40,6 +40,7 @@ public class SaveWesteros extends GenericSearchProblem
 		//Node initial = new GOTNode(null, null, );
 	}
 
+	
 	@Override
 	public State stateSpace(Node node, Operator operator)
 	{
@@ -118,9 +119,25 @@ public class SaveWesteros extends GenericSearchProblem
 		}
 		
 		if(resultantState != null)
-			resultantState.heuristic = estimateHeuristic1(resultantState);
+			resultantState.heuristic = estimateHeuristic2(resultantState);
 		
 		return resultantState;
+	}
+	
+	public State genPlayer() 
+	{
+		ArrayList<Point> wwPositions = new ArrayList<Point>();
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				if(grid[i][j].type == CellType.WHITE_WALKER) 
+				{
+					wwPositions.add(new Point(i,j));
+				}
+			}
+		}
+		State s = new State(null,null, new Point(m-1,n-1), Orientation.NORTH,0,wwPositions,0);
+		s.heuristic = estimateHeuristic2(s);
+		return s;
 	}
 	
 	public int estimateHeuristicGreedy(Node node)
@@ -606,21 +623,7 @@ public class SaveWesteros extends GenericSearchProblem
 		}
 	}
 
-	public State genPlayer() 
-	{
-		ArrayList<Point> wwPositions = new ArrayList<Point>();
-		for (int i = 0; i < m; i++) {
-			for (int j = 0; j < n; j++) {
-				if(grid[i][j].type == CellType.WHITE_WALKER) 
-				{
-					wwPositions.add(new Point(i,j));
-				}
-			}
-		}
-		State s = new State(null,null, new Point(m-1,n-1), Orientation.NORTH,0,wwPositions,0);
-		s.heuristic = estimateHeuristicGreedy(s);
-		return s;
-	}
+	
 	
 
 	public void genGridStatic()
