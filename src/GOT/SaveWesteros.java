@@ -13,6 +13,7 @@ public class SaveWesteros extends GenericSearchProblem
 	Cell[][] grid;
 	int m;
 	int n;
+	int randomWW;
 	int inventory;
 	State player;
 	
@@ -31,7 +32,7 @@ public class SaveWesteros extends GenericSearchProblem
 		this.initValues(firstState, actions);
 		
 		//this.search(grid, QueuingFunction.BREADTH_FIRST_SEARCH, true);
-		this.search(QueuingFunction.A_STAR, true);
+		this.search(QueuingFunction.UNIFORM_COST_SEARCH, true);
 	}
 	
 	public SaveWesteros(Node initial, ArrayList<Operator> operators)
@@ -528,9 +529,9 @@ public class SaveWesteros extends GenericSearchProblem
 				if(parent.remainingWW.size() - state.remainingWW.size() == 3)
 					return 1;			
 				break;
-			case FORWARD: return 5; 
-			case ROTATE_LEFT: return 5; 
-			case ROTATE_RIGHT: return 5;
+			case FORWARD: return (int) Math.ceil(randomWW/state.remainingWW.size()); 
+			case ROTATE_LEFT: return (int) Math.ceil(randomWW/state.remainingWW.size());
+			case ROTATE_RIGHT: return (int) Math.ceil(randomWW/state.remainingWW.size());
 		}
 		return 0;
 	}
@@ -574,7 +575,7 @@ public class SaveWesteros extends GenericSearchProblem
 		grid[x][y] = new Cell(CellType.DRAGON_STONE);
 		System.out.println(grid[x][y].type);
 		
-		int randomWW = (int)(Math.random()*WWMaxNumber) + 1;
+		randomWW = (int)(Math.random()*WWMaxNumber) + 1;
 		int randomObstacles = (int)(Math.random()*ObstaclesMaxNumber) + 1;
 
 		for (int i = 0; i <randomWW ; i++) 
