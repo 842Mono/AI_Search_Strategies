@@ -16,6 +16,7 @@ public class SaveWesteros extends GenericSearchProblem
 	int randomWW;
 	int inventory;
 	State player;
+	int randomObstacles;
 	
 	public SaveWesteros()
 	{
@@ -32,7 +33,7 @@ public class SaveWesteros extends GenericSearchProblem
 		this.initValues(firstState, actions);
 		
 		//this.search(grid, QueuingFunction.BREADTH_FIRST_SEARCH, true);
-		this.search(QueuingFunction.UNIFORM_COST_SEARCH, true);
+		this.search(QueuingFunction.A_STAR, true);
 	}
 	
 	public SaveWesteros(Node initial, ArrayList<Operator> operators)
@@ -522,16 +523,34 @@ public class SaveWesteros extends GenericSearchProblem
 		switch(action)
 		{
 			case KILL: 
-				if(parent.remainingWW.size() - state.remainingWW.size() == 1)
-					return 4;
-				if(parent.remainingWW.size() - state.remainingWW.size() == 2)
-					return 2;
-				if(parent.remainingWW.size() - state.remainingWW.size() == 3)
-					return 1;			
-				break;
-			case FORWARD: return (int) Math.ceil(randomWW/state.remainingWW.size()); 
-			case ROTATE_LEFT: return (int) Math.ceil(randomWW/state.remainingWW.size());
-			case ROTATE_RIGHT: return (int) Math.ceil(randomWW/state.remainingWW.size());
+					return (m*n)-randomObstacles-state.remainingWW.size();	
+			case FORWARD: return 5; 
+			case ROTATE_LEFT: 
+			if
+			(
+					   (state.operator == Action.ROTATE_LEFT || state.operator == Action.ROTATE_RIGHT)
+					&& ((state.parent != null)
+					&& (state.parent.operator == Action.ROTATE_LEFT || state.parent.operator == Action.ROTATE_RIGHT))
+					&& ((state.parent.parent != null)
+					&& (state.parent.parent.operator == Action.ROTATE_LEFT || state.parent.parent.operator == Action.ROTATE_RIGHT))
+				)
+					return m*n*10;
+			else
+				return 5;
+			case ROTATE_RIGHT: 
+				if
+				(
+					   (state.operator == Action.ROTATE_LEFT || state.operator == Action.ROTATE_RIGHT)
+					&& ((state.parent != null)
+					&& (state.parent.operator == Action.ROTATE_LEFT || state.parent.operator == Action.ROTATE_RIGHT))
+					&& ((state.parent.parent != null)
+					&& (state.parent.parent.operator == Action.ROTATE_LEFT || state.parent.parent.operator == Action.ROTATE_RIGHT))
+				)
+				{
+					return m*n*10;
+				}
+			else
+				return 5;
 		}
 		return 0;
 	}
@@ -562,7 +581,7 @@ public class SaveWesteros extends GenericSearchProblem
 		int ObstaclesMaxNumber = 4;
 //		int random = (int)(Math.random()*7)+4;
 		
-		inventory = (int)(Math.random()*4)+30;
+		inventory = (int)(Math.random()*4)+((m*n)-6);
 		
 		grid = new Cell[m][n];
 		
@@ -576,7 +595,7 @@ public class SaveWesteros extends GenericSearchProblem
 		System.out.println(grid[x][y].type);
 		
 		randomWW = (int)(Math.random()*WWMaxNumber) + 1;
-		int randomObstacles = (int)(Math.random()*ObstaclesMaxNumber) + 1;
+		randomObstacles = (int)(Math.random()*ObstaclesMaxNumber) + 1;
 
 		for (int i = 0; i <randomWW ; i++) 
 		{

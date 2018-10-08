@@ -69,6 +69,7 @@ public abstract class GenericSearchProblem
 			if(child != null)
 			{
 				if(child.parent != null)
+					//System.out.println(child.operator);
 					child.totalCost = child.parent.totalCost;
 				child.totalCost += this.pathCostFunction(child, operators.get(i));
 				queue.add(child);
