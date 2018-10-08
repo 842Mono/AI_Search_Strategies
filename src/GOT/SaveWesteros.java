@@ -31,7 +31,7 @@ public class SaveWesteros extends GenericSearchProblem
 		this.initValues(firstState, actions);
 		
 		//this.search(grid, QueuingFunction.BREADTH_FIRST_SEARCH, true);
-		this.search(QueuingFunction.ITERATIVE_DEEPENING, true);
+		this.search(QueuingFunction.A_STAR, true);
 	}
 	
 	public SaveWesteros(Node initial, ArrayList<Operator> operators)
@@ -161,8 +161,9 @@ public class SaveWesteros extends GenericSearchProblem
 		for(int i = 0; i < state.remainingWW.size(); ++i)
 		{
 			int comparisonHeuristic = 0;
-			int leastx = Math.abs(state.remainingWW.get(i).x - posx); //if -ve then west
-			int leasty = Math.abs(state.remainingWW.get(i).y - posy); //if -ve then north
+			
+			int leastx = state.remainingWW.get(i).x - posx; //if -ve then west
+			int leasty = state.remainingWW.get(i).y - posy; //if -ve then north
 			if( (leastx < 0 && state.orientation == Orientation.EAST) ||
 				(leasty < 0 && state.orientation == Orientation.SOUTH) )
 				comparisonHeuristic += 5;
@@ -211,8 +212,8 @@ public class SaveWesteros extends GenericSearchProblem
 		for(int i = 0; i < state.remainingWW.size(); ++i)
 		{
 			int comparisonHeuristic = 0;
-			int leastx = Math.abs(state.remainingWW.get(i).x - posx); //if -ve then west
-			int leasty = Math.abs(state.remainingWW.get(i).y - posy); //if -ve then north
+			int leastx = state.remainingWW.get(i).x - posx; //if -ve then west
+			int leasty = state.remainingWW.get(i).y - posy; //if -ve then north
 			if( (leastx < 0 && state.orientation == Orientation.EAST) ||
 				(leasty < 0 && state.orientation == Orientation.SOUTH) )
 				comparisonHeuristic += 5;
@@ -280,29 +281,22 @@ public class SaveWesteros extends GenericSearchProblem
 				{
 					if(grid[i][j].type == CellType.DRAGON_STONE)
 					{	
-						int leastx = Math.abs(i - posx); //if -ve then west
-						int leasty = Math.abs(j - posy); //if -ve then north
+						int leastx = i - posx; //if -ve then west
+						int leasty = j - posy; //if -ve then north
 						if( (leastx < 0 && state.orientation == Orientation.EAST) ||
 								(leasty < 0 && state.orientation == Orientation.SOUTH) )
 								heuristic1 += 5;
 						heuristic1 += (Math.abs(i - posx) + Math.abs(j - posy))*5;
 						break;
-					}
-					
-					
+					}	
 				}
 			}
-			
-			
-			
 		}
 		else
 		{
 			double leastNumberDragonGlasses = Math.ceil(state.remainingWW.size() / 3.0); 
-			heuristic1 = (int) leastNumberDragonGlasses;
-			
+			heuristic1 = (int) leastNumberDragonGlasses;	
 		}
-		
 		if
 		(
 			   (state.operator == Action.ROTATE_LEFT || state.operator == Action.ROTATE_RIGHT)
@@ -313,8 +307,6 @@ public class SaveWesteros extends GenericSearchProblem
 		)
 			heuristic1 += 6;
 		return heuristic1;
-	
-
 }
 	
 	public State kill(State currentState)
@@ -328,13 +320,13 @@ public class SaveWesteros extends GenericSearchProblem
 				return null;
 			else 
 			{
-				int cost = currentState.remainingWW.size() - killed.size();
-				switch(cost)
-				{
-					case 1: cost = 4; break;
-					case 2: cost = 2; break;
-					case 3: cost = 1; break;
-				}
+//				int cost = currentState.remainingWW.size() - killed.size();
+//				switch(cost)
+//				{
+//					case 1: cost = 4; break;
+//					case 2: cost = 2; break;
+//					case 3: cost = 1; break;
+//				}
 				return new State
 				(
 					currentState,
@@ -569,7 +561,7 @@ public class SaveWesteros extends GenericSearchProblem
 		int ObstaclesMaxNumber = 4;
 //		int random = (int)(Math.random()*7)+4;
 		
-		inventory = (int)(Math.random()*4)+3;
+		inventory = (int)(Math.random()*4)+30;
 		
 		grid = new Cell[m][n];
 		
@@ -630,7 +622,7 @@ public class SaveWesteros extends GenericSearchProblem
 	{
 		m = 4;
 		n = 4;
-		inventory = (int)(Math.random()*4)+3;
+		inventory = (int)(Math.random()*4)+30;
 		
 		grid = new Cell[m][n];
 		
