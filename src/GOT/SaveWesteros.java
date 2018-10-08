@@ -9,7 +9,7 @@ import Generic.QueuingFunction;
 
 public class SaveWesteros extends GenericSearchProblem
 {
-	Cell[][] grid;
+	Cell[][] grid; 
 	int m;
 	int n;
 	int randomWW;
@@ -516,14 +516,12 @@ public class SaveWesteros extends GenericSearchProblem
 			action = (Action) operator;
 		if(node instanceof State) 
 			state =  (State) node;
-		if(node.parent instanceof State)
-			parent = (State) node.parent;
 		
 		switch(action)
 		{
 			case KILL: 
-					return (m*n)-randomObstacles-state.remainingWW.size();	
-			case FORWARD: return 1; 
+					return (m*n);
+			case FORWARD: return 5; 
 			case ROTATE_LEFT: 
 			if
 			(
@@ -535,7 +533,7 @@ public class SaveWesteros extends GenericSearchProblem
 				)
 					return m*n*10;
 			else
-				return 1;
+				return 5;
 			case ROTATE_RIGHT: 
 				if
 				(
@@ -549,7 +547,7 @@ public class SaveWesteros extends GenericSearchProblem
 					return m*n*10;
 				}
 			else
-				return 1;
+				return 5;
 		}
 		return 0;
 	}
