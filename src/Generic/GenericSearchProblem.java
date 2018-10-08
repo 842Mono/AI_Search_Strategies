@@ -1,6 +1,8 @@
 package Generic;
 import java.util.ArrayList;
 
+import GOT.State;
+
 public abstract class GenericSearchProblem
 {
 	ArrayList<Node> queue;
@@ -16,7 +18,7 @@ public abstract class GenericSearchProblem
 	
 	public abstract Node stateSpace(Node node, Operator operator);
 	public abstract boolean goalTest(Node node);
-	public abstract int pathCostFunction(Node node, Operator operator);
+	public abstract int pathCostFunction(Node node);
 //	public abstract int estimateHeuristic(Node node);
 	public void expand(ArrayList<Node> queue, ArrayList<Operator> operators, QueuingFunction strategy)
 	{
@@ -71,7 +73,7 @@ public abstract class GenericSearchProblem
 				if(child.parent != null)
 					//System.out.println(child.operator);
 					child.totalCost = child.parent.totalCost;
-				child.totalCost += this.pathCostFunction(child, operators.get(i));
+				child.totalCost += this.pathCostFunction(child);
 				queue.add(child);
 			}
 		}
@@ -102,7 +104,7 @@ public abstract class GenericSearchProblem
 				{
 					if(child.parent != null)
 						child.totalCost = child.parent.totalCost;
-					child.totalCost += this.pathCostFunction(child, operators.get(i));
+					child.totalCost += this.pathCostFunction(child);
 					queue.add(child);
 				}
 			}
@@ -147,6 +149,12 @@ public abstract class GenericSearchProblem
 		
 		ArrayList<Operator> sequence = new ArrayList<Operator>();
 		int[] numberOfNodes = {0};
+		
+		//testing for the final state
+		System.out.println("length of ww " + ((State)queue.get(0)).remainingWW.size());
+		System.out.println("length of ww parent " + ((State)queue.get(0).parent).remainingWW.size());
+		
+		
 		sequence = this.backtrack(queue.get(0), sequence, numberOfNodes);
 		
 		result.operators = sequence;
