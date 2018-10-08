@@ -14,10 +14,9 @@ public class ResultObject
 	@Override
 	public String toString()
 	{
-		ArrayList<Operator> result = new ArrayList<Operator>();
-		for(int i =1; i<operators.size(); i++) {
-	       result.add(operators.get(i));
-	    }
-		return result.toString() + " " + this.cost + " " + this.numberOfNodes;
+		operators.remove(0);
+		return "Listed Sequence Of Actions: " + operators.toString() + "\n" +
+			   "Total Cost: " + this.cost + "\n" +
+			   "Total Number of Nodes Expanded: " + this.numberOfNodes;
 	}
 }

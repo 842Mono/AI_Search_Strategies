@@ -32,7 +32,8 @@ public class SaveWesteros extends GenericSearchProblem
 		this.initValues(firstState, actions);
 		
 		//this.search(grid, QueuingFunction.BREADTH_FIRST_SEARCH, true);
-		this.search(QueuingFunction.UNIFORM_COST_SEARCH, true);
+		this.search(QueuingFunction.A_STAR, true, grid);
+		
 	}
 	
 	public SaveWesteros(Node initial, ArrayList<Operator> operators)
@@ -118,9 +119,11 @@ public class SaveWesteros extends GenericSearchProblem
 			default: throw new Error("offf");
 		}
 		
-		if(resultantState != null)
+		if(resultantState != null){
 			resultantState.heuristic = estimateHeuristic2(resultantState);
 		
+//		this.visualizeState(this.grid, (Node)resultantState);
+	}
 		return resultantState;
 	}
 	
@@ -523,6 +526,15 @@ public class SaveWesteros extends GenericSearchProblem
 			case ROTATE_LEFT:
 				if(state.parent != null && state.parent.operator == Action.ROTATE_RIGHT)
 					return m*m*m*m*n*n*n*n;
+				if
+				(
+					((state.parent != null)
+					&& (state.parent.operator == Action.ROTATE_LEFT || state.parent.operator == Action.ROTATE_RIGHT))
+					&& ((state.parent.parent != null)
+					&& (state.parent.parent.operator == Action.ROTATE_LEFT || state.parent.parent.operator == Action.ROTATE_RIGHT))
+				)
+					return m*n*m*n*m*n*m*n;
+				return 5;
 			case ROTATE_RIGHT:
 				if(state.parent != null && state.parent.operator == Action.ROTATE_LEFT)
 					return m*m*m*m*n*n*n*n;
@@ -558,6 +570,12 @@ public class SaveWesteros extends GenericSearchProblem
 		{
 			for(int j = 0; j < n; j++)
 			{
+				if(i==m-1 && j==n-1)
+				{
+					System.out.print("[J]"); break;
+				}
+				else
+				{
 				switch(g[j][i].type)
 				{
 					case EMPTY: System.out.print("[O]"); break;
@@ -566,8 +584,10 @@ public class SaveWesteros extends GenericSearchProblem
 					case DRAGON_STONE: System.out.print("[D]"); break;
 				}
 			}
+			}
 			System.out.println();
 		}
+		System.out.println();
 	}
 	
 	public void genGrid()

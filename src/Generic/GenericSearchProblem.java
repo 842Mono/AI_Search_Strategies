@@ -1,6 +1,7 @@
 package Generic;
 import java.util.ArrayList;
 
+import GOT.Cell;
 import GOT.State;
 
 public abstract class GenericSearchProblem
@@ -8,6 +9,7 @@ public abstract class GenericSearchProblem
 	ArrayList<Node> queue;
 	ArrayList<Operator> operators;
 	QueuingFunction queuingFunction;
+	Cell[][]grid;
 	
 	public void initValues(ArrayList<Node> queue, ArrayList<Operator> operators) //, QueuingFunction qf)
 	{
@@ -111,8 +113,9 @@ public abstract class GenericSearchProblem
 			queue.sort((o1, o2) -> o1.heuristic + o1.totalCost < o2.heuristic + o2.totalCost ? -1 : 1);
 	}
 	
-	public ResultObject search(QueuingFunction strategy, boolean visualize)
+	public ResultObject search(QueuingFunction strategy, boolean visualize, Cell[][] grid)
 	{
+		this.grid = grid;
 		int iterativeDeepeningLevel = 0;
 		Node root = queue.get(0);
 		while(true)
@@ -147,32 +150,118 @@ public abstract class GenericSearchProblem
 
 		ResultObject result = new ResultObject(true);
 		
-		ArrayList<Operator> sequence = new ArrayList<Operator>();
+		ArrayList<Node> sequence = new ArrayList<Node>();
 		int[] numberOfNodes = {0};
 		
 		//testing for the final state
-		System.out.println("length of ww " + ((State)queue.get(0)).remainingWW.size());
-		System.out.println("length of ww parent " + ((State)queue.get(0).parent).remainingWW.size());
+		//System.out.println("length of ww " + ((State)queue.get(0)).remainingWW.size());
+		//System.out.println("length of ww parent " + ((State)queue.get(0).parent).remainingWW.size());
 		
 		
 		sequence = this.backtrack(queue.get(0), sequence, numberOfNodes);
+		ArrayList<Operator> operators = new ArrayList<Operator>();
 		
-		result.operators = sequence;
+		for (int i = 0; i < sequence.size(); i++) {
+			operators.add(sequence.get(i).operator);
+		}
+		
+		result.operators = operators;
 		result.numberOfNodes = numberOfNodes[0];
 		result.cost = queue.get(0).totalCost;
+			
+		System.out.println("VISUALIZED SEQUENCE OF ACTIONS IN GRID:");
 		
+		for (int i = 0; i < sequence.size(); i++) {
+			GenericSearchProblem.visualizeState(grid, (State)sequence.get(i));
+		}
+		
+		System.out.println();
 		System.out.println(result);
+
 		return result;
 	}
 	
-	public ArrayList<Operator> backtrack(Node node, ArrayList<Operator> sequence, int[] numberOfNodes)
+	public static void visualizeState(Cell[][] grid, Node node)
+	{
+		State state= null;
+		if(node instanceof State)
+		{
+			state=(State) node;
+		}
+		
+		System.out.println();
+		
+		if(state.operator == null)
+			System.out.println("INITIAL GRID" + " Orientation: " + state.orientation);
+		else
+			System.out.println("Action Taken: " + state.operator);
+			
+		System.out.println();
+			
+		for(int i = 0; i < grid.length; i++)
+		{
+			for(int j = 0; j < grid[i].length; j++)
+			{
+				switch(grid[j][i].type)
+				{
+					case EMPTY: 
+						if(i == state.getY() && j == state.getX())
+						{
+							System.out.print("[J]");
+						}
+						else 
+						{
+							System.out.print("[E]"); 
+						}
+						break;
+					case OBSTACLE: System.out.print("[X]"); break;
+					case DRAGON_STONE:
+						if(i == state.getY() && j == state.getX())
+						{
+							System.out.print("[JD]");
+						}
+						else 
+						{
+							System.out.print("[D]");
+						}
+						break;
+					case WHITE_WALKER:
+						
+						if(i == state.getY() && j == state.getX())
+						{
+							System.out.print("[J]"); break;
+						}
+						else 
+						{
+							boolean found = false;
+							for(int k = 0; k < state.remainingWW.size(); k++)
+							{
+								if(state.remainingWW.get(k).y == i && state.remainingWW.get(k).x == j)
+								{
+									System.out.print("[W]"); found = true;  break;
+								}	
+							}
+							
+							if(found == false)
+							{
+								System.out.print("[E]");
+							}
+							break;
+						}
+				}
+			}
+			System.out.println();
+		}
+	}
+	
+	public ArrayList<Node> backtrack(Node node, ArrayList<Node> sequence, int[] numberOfNodes)
 	{
 		if(node != null)
 		{
-			sequence.add(0, node.operator);
+			sequence.add(0, node);
 			numberOfNodes[0]++;
 			this.backtrack(node.parent, sequence, numberOfNodes);
-			System.out.println(node.totalCost);
+//			System.out.println(node.totalCost);
 		}
 		return sequence;
 	}
