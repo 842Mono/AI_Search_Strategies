@@ -1,6 +1,5 @@
 package GOT;
 import java.awt.Point;
-import java.rmi.dgc.Lease;
 import java.util.ArrayList;
 
 import Generic.GenericSearchProblem;

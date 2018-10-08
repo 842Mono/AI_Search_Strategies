@@ -1,8 +1,4 @@
-import java.util.ArrayList;
-
-import GOT.Action;
 import GOT.SaveWesteros;
-import GOT.State;
 
 public class Control
 {
@@ -12,5 +8,4 @@ public class Control
 		new SaveWesteros();
 	}
 }
-
 
