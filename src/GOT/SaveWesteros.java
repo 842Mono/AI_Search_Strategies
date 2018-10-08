@@ -1,6 +1,5 @@
 package GOT;
 import java.awt.Point;
-import java.rmi.dgc.Lease;
 import java.util.ArrayList;
 
 import Generic.GenericSearchProblem;
@@ -524,7 +523,7 @@ public class SaveWesteros extends GenericSearchProblem
 		{
 			case KILL: 
 					return (m*n)-randomObstacles-state.remainingWW.size();	
-			case FORWARD: return 5; 
+			case FORWARD: return 1; 
 			case ROTATE_LEFT: 
 			if
 			(
@@ -536,7 +535,7 @@ public class SaveWesteros extends GenericSearchProblem
 				)
 					return m*n*10;
 			else
-				return 5;
+				return 1;
 			case ROTATE_RIGHT: 
 				if
 				(
@@ -550,7 +549,7 @@ public class SaveWesteros extends GenericSearchProblem
 					return m*n*10;
 				}
 			else
-				return 5;
+				return 1;
 		}
 		return 0;
 	}

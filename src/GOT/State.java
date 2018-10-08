@@ -3,7 +3,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import Generic.Node;
-import Generic.Operator;
 
 public class State extends Node
 {
