@@ -1,9 +1,6 @@
 package Generic;
 import java.util.ArrayList;
 
-import GOT.Cell;
-import GOT.State;
-
 public abstract class GenericSearchProblem
 {
 	ArrayList<Node> queue;
@@ -14,13 +11,19 @@ public abstract class GenericSearchProblem
 	{
 		this.queue = queue;
 		this.operators = operators;
-		//this.queuingFunction = qf;
 	}
 	
 	public abstract Node stateSpace(Node node, Operator operator);
 	public abstract boolean goalTest(Node node);
 	public abstract int pathCostFunction(Node node);
-//	public abstract int estimateHeuristic(Node node);
+
+	/*
+	 * expand method used to expand the queue according to the search strategy used
+	 * @parameters 
+	 * queue : ArrayList of Nodes expanded we have so far
+	 * operators: ArrayList of possible operators for expansion
+	 * strategy: Enum representing Search strategy used to expand the Node
+	 */
 	public void expand(ArrayList<Node> queue, ArrayList<Operator> operators, QueuingFunction strategy)
 	{
 		for(int i = 0; i < operators.size(); ++i)
@@ -37,6 +40,12 @@ public abstract class GenericSearchProblem
 		}
 	}
 	
+	/*
+	 * Breadth First Search method representing searching by BFS algorithm
+	 * @parameters 
+	 * queue : ArrayList of Nodes expanded we have so far
+	 * operators: ArrayList of possible operators for expansion
+	 */
 	private void breadthFirstSearch(ArrayList<Node> queue, ArrayList<Operator> operators)
 	{
 		Node firstNode = queue.remove(0);
@@ -44,12 +53,17 @@ public abstract class GenericSearchProblem
 		for(int i = 0; i < operators.size(); i++)
 		{
 			Node child = stateSpace(firstNode, operators.get(i));
-//			child.heuristic = estimateHeuristic(child);
 			if(child != null)
 				queue.add(child);
 		}
 	}
 	
+	/*
+	 * Depth First Search method representing searching by DFS algorithm
+	 * @parameters 
+	 * queue : ArrayList of Nodes expanded we have so far
+	 * operators: ArrayList of possible operators for expansion
+	 */
 	private void depthFirstSearch(ArrayList<Node> queue, ArrayList<Operator> operators)
 	{
 		Node firstNode = queue.remove(0);
@@ -62,6 +76,12 @@ public abstract class GenericSearchProblem
 		}
 	}
 	
+	/*
+	 * Uniform Cost Search method representing searching by UCS algorithm
+	 * @parameters 
+	 * queue : ArrayList of Nodes expanded we have so far
+	 * operators: ArrayList of possible operators for expansion
+	 */
 	private void uniformCostSearch(ArrayList<Node> queue, ArrayList<Operator> operators)
 	{
 		Node firstNode = queue.remove(0);
@@ -81,6 +101,12 @@ public abstract class GenericSearchProblem
 		queue.sort((o1, o2) -> o1.totalCost < o2.totalCost ? -1 : 1);
 	}
 	
+	/*
+	 * Greedy Search method representing searching by greedy search algorithm
+	 * @parameters 
+	 * queue : ArrayList of Nodes expanded we have so far
+	 * operators: ArrayList of possible operators for expansion
+	 */
 	private void greedySearch(ArrayList<Node> queue, ArrayList<Operator> operators)
 	{
 		Node firstNode = queue.remove(0);
@@ -94,6 +120,12 @@ public abstract class GenericSearchProblem
 		queue.sort((o1, o2) -> o1.heuristic < o2.heuristic ? -1 : 1);
 	}
 	
+	/*
+	 * Uniform Cost Search method representing searching by A* algorithm
+	 * @parameters 
+	 * queue : ArrayList of Nodes expanded we have so far
+	 * operators: ArrayList of possible operators for expansion
+	 */
 	private void aStarSearch(ArrayList<Node> queue, ArrayList<Operator> operators)
 	{
 			Node firstNode = queue.remove(0);
@@ -148,9 +180,8 @@ public abstract class GenericSearchProblem
 		ResultObject result = new ResultObject(true);
 		
 		ArrayList<Node> sequence = new ArrayList<Node>();
-		int[] numberOfNodes = {0};
 		
-		sequence = this.backtrack(queue.get(0), sequence, numberOfNodes);
+		sequence = this.backtrack(queue.get(0), sequence);
 		ArrayList<Operator> operators = new ArrayList<Operator>();
 		
 		for (int i = 0; i < sequence.size(); i++) {
@@ -159,19 +190,23 @@ public abstract class GenericSearchProblem
 		
 		result.nodes = sequence;
 		result.operators = operators;
-		result.numberOfNodes = numberOfNodes[0];
 		result.cost = queue.get(0).totalCost;
 
 		return result;
 	}
 		
-	public ArrayList<Node> backtrack(Node node, ArrayList<Node> sequence, int[] numberOfNodes)
+	/*
+	 * back track it is a recursion method that returns the sequence of nodes from the root till the goal Node.
+	 * @parameters 
+	 * node : it is the node which we will get its parent until we reaches the root which is our first node.
+	 * sequence: it is the sequence of nodes which is initially empty and is filled by the recursion calls of the method.
+	 **/
+	public ArrayList<Node> backtrack(Node node, ArrayList<Node> sequence)
 	{
 		if(node != null)
 		{
 			sequence.add(0, node);
-			numberOfNodes[0]++;
-			this.backtrack(node.parent, sequence, numberOfNodes);
+			this.backtrack(node.parent, sequence);
 //			System.out.println(node.totalCost);
 		}
 		return sequence;

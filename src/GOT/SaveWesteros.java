@@ -16,6 +16,7 @@ public class SaveWesteros extends GenericSearchProblem
 	int randomWW;
 	int inventory;
 	State player;
+	int numberOfNodes = 0;
 	int randomObstacles;
 	
 	public SaveWesteros()
@@ -37,7 +38,7 @@ public class SaveWesteros extends GenericSearchProblem
 		SaveWesteros x = new SaveWesteros();
 		grid = SaveWesteros.grid;
 		ResultObject result= x.GeneralSearchProcedure(x, strategy);
-		
+		result.numberOfNodes = x.numberOfNodes;
 		if(visualize){
 			System.out.println("VISUALIZED SEQUENCE OF ACTIONS IN GRID:");
 			
@@ -197,8 +198,10 @@ public class SaveWesteros extends GenericSearchProblem
 			default: throw new Error("offf");
 		}
 		
-		if(resultantState != null){
-			resultantState.heuristic = estimateHeuristic1(resultantState);
+		if(resultantState != null)
+		{
+			numberOfNodes++;
+			resultantState.heuristic = estimateHeuristic2(resultantState);
 		}
 		return resultantState;
 	}
@@ -215,7 +218,7 @@ public class SaveWesteros extends GenericSearchProblem
 			}
 		}
 		State s = new State(null,null, new Point(m-1,n-1), Orientation.NORTH,0,wwPositions,0);
-		s.heuristic = estimateHeuristic1(s);
+		s.heuristic = estimateHeuristic2(s);
 		return s;
 	}
 	
@@ -721,7 +724,7 @@ public class SaveWesteros extends GenericSearchProblem
 	}
 
 	public static void main(String[] args) {
-		ResultObject result = search(grid, QueuingFunction.A_STAR, true);
+		ResultObject result = search(grid, QueuingFunction.ITERATIVE_DEEPENING, true);
 		System.out.println(result);
 	}
 }
