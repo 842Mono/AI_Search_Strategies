@@ -6,10 +6,11 @@ import Generic.GenericSearchProblem;
 import Generic.Node;
 import Generic.Operator;
 import Generic.QueuingFunction;
+import Generic.ResultObject;
 
 public class SaveWesteros extends GenericSearchProblem
 {
-	Cell[][] grid; 
+	public static Cell[][] grid;
 	int m;
 	int n;
 	int randomWW;
@@ -30,19 +31,98 @@ public class SaveWesteros extends GenericSearchProblem
 		actions.add(Action.FORWARD);
 		actions.add(Action.ROTATE_RIGHT);
 		this.initValues(firstState, actions);
-		
-		//this.search(grid, QueuingFunction.BREADTH_FIRST_SEARCH, true);
-		this.search(QueuingFunction.A_STAR, true, grid);
-		
 	}
 	
-	public SaveWesteros(Node initial, ArrayList<Operator> operators)
+	public static ResultObject search(Cell[][]grid, QueuingFunction strategy, boolean visualize){
+		SaveWesteros x = new SaveWesteros();
+		grid = SaveWesteros.grid;
+		ResultObject result= x.GeneralSearchProcedure(x, strategy);
+		
+		if(visualize){
+			System.out.println("VISUALIZED SEQUENCE OF ACTIONS IN GRID:");
+			
+			for (int i = 0; i < result.nodes.size(); i++) {
+				visualizeState(grid, (State)result.nodes.get(i));
+			}
+			System.out.println();
+		}
+		
+		return result;
+	}
+	
+	public static void visualizeState(Cell[][] grid, Node node)
 	{
-		super(initial, operators);
-		//Node initial = new GOTNode(null, null, );
+		State state= null;
+		if(node instanceof State)
+		{
+			state=(State) node;
+		}
+		
+		System.out.println();
+		
+		if(state.operator == null)
+			System.out.println("INITIAL GRID" + " Orientation: " + state.orientation);
+		else
+			System.out.println("Action Taken: " + state.operator);
+			
+		System.out.println();
+			
+		for(int i = 0; i < grid.length; i++)
+		{
+			for(int j = 0; j < grid[i].length; j++)
+			{
+				switch(grid[j][i].type)
+				{
+					case EMPTY: 
+						if(i == state.getY() && j == state.getX())
+						{
+							System.out.print("[J]");
+						}
+						else 
+						{
+							System.out.print("[E]"); 
+						}
+						break;
+					case OBSTACLE: System.out.print("[X]"); break;
+					case DRAGON_STONE:
+						if(i == state.getY() && j == state.getX())
+						{
+							System.out.print("[JD]");
+						}
+						else 
+						{
+							System.out.print("[D]");
+						}
+						break;
+					case WHITE_WALKER:
+						
+						if(i == state.getY() && j == state.getX())
+						{
+							System.out.print("[J]"); break;
+						}
+						else 
+						{
+							boolean found = false;
+							for(int k = 0; k < state.remainingWW.size(); k++)
+							{
+								if(state.remainingWW.get(k).y == i && state.remainingWW.get(k).x == j)
+								{
+									System.out.print("[W]"); found = true;  break;
+								}	
+							}
+							
+							if(found == false)
+							{
+								System.out.print("[E]");
+							}
+							break;
+						}
+				}
+			}
+			System.out.println();
+		}
 	}
 
-	
 	@Override
 	public State stateSpace(Node node, Operator operator)
 	{
@@ -57,8 +137,6 @@ public class SaveWesteros extends GenericSearchProblem
 			action = (Action)operator;
 		else
 			throw new Error("action is not an operator");
-		
-		//switch
 		
 		State resultantState = null;
 		Orientation newOrientation;
@@ -120,10 +198,8 @@ public class SaveWesteros extends GenericSearchProblem
 		}
 		
 		if(resultantState != null){
-			resultantState.heuristic = estimateHeuristic2(resultantState);
-		
-//		this.visualizeState(this.grid, (Node)resultantState);
-	}
+			resultantState.heuristic = estimateHeuristic1(resultantState);
+		}
 		return resultantState;
 	}
 	
@@ -139,7 +215,7 @@ public class SaveWesteros extends GenericSearchProblem
 			}
 		}
 		State s = new State(null,null, new Point(m-1,n-1), Orientation.NORTH,0,wwPositions,0);
-		s.heuristic = estimateHeuristic2(s);
+		s.heuristic = estimateHeuristic1(s);
 		return s;
 	}
 	
@@ -155,11 +231,7 @@ public class SaveWesteros extends GenericSearchProblem
 		
 		int posx = state.getX();
 		int posy = state.getY();
-		
-//		ArrayList<Point> threeKills = new ArrayList<Point>();
-//		ArrayList<Point> twoKills = new ArrayList<Point>();
-//		ArrayList<Point> oneKill = new ArrayList<Point>();
-		
+				
 		int heuristic = 0;
 		for(int i = 0; i < state.remainingWW.size(); ++i)
 		{
@@ -193,7 +265,6 @@ public class SaveWesteros extends GenericSearchProblem
 		return heuristic;
 	}
 	
-//	@Override
 	public int estimateHeuristic1(Node node)
 	{
 		//type casting
@@ -206,10 +277,6 @@ public class SaveWesteros extends GenericSearchProblem
 		
 		int posx = state.getX();
 		int posy = state.getY();
-		
-//		ArrayList<Point> threeKills = new ArrayList<Point>();
-//		ArrayList<Point> twoKills = new ArrayList<Point>();
-//		ArrayList<Point> oneKill = new ArrayList<Point>();
 		
 		int heuristic = 0;
 		for(int i = 0; i < state.remainingWW.size(); ++i)
@@ -258,8 +325,7 @@ public class SaveWesteros extends GenericSearchProblem
 		
 		return heuristic;
 	}
-	
-		
+			
 	public int estimateHeuristic2(Node node)
 	{
 		//type casting
@@ -272,7 +338,6 @@ public class SaveWesteros extends GenericSearchProblem
 		
 		int posx = state.getX();
 		int posy = state.getY();
-		
 		
 		int heuristic1 = 0;
 		
@@ -323,13 +388,6 @@ public class SaveWesteros extends GenericSearchProblem
 				return null;
 			else 
 			{
-//				int cost = currentState.remainingWW.size() - killed.size();
-//				switch(cost)
-//				{
-//					case 1: cost = 4; break;
-//					case 2: cost = 2; break;
-//					case 3: cost = 1; break;
-//				}
 				return new State
 				(
 					currentState,
@@ -511,7 +569,6 @@ public class SaveWesteros extends GenericSearchProblem
 	public int pathCostFunction(Node node)
 	{
 		//typecasting
-		Action action = null;
 		State state  = null;
 
 		if(node instanceof State) 
@@ -519,7 +576,6 @@ public class SaveWesteros extends GenericSearchProblem
 		
 		switch((Action)state.operator)
 		{
-
 			case KILL:
 					return (m*n);	
 			case FORWARD: return 5; 
@@ -547,30 +603,17 @@ public class SaveWesteros extends GenericSearchProblem
 			)
 				return m*n*m*n*m*n*m*n;
 			return 5;
-//			case ROTATE_RIGHT: 
-//				if
-//				(
-//					   (state.operator == Action.ROTATE_LEFT || state.operator == Action.ROTATE_RIGHT)
-//					&& ((state.parent != null)
-//					&& (state.parent.operator == Action.ROTATE_LEFT || state.parent.operator == Action.ROTATE_RIGHT))
-//					&& ((state.parent.parent != null)
-//					&& (state.parent.parent.operator == Action.ROTATE_LEFT || state.parent.parent.operator == Action.ROTATE_RIGHT))
-//				)
-//					return m*n*m*n;
-//			else
-//				return 1;
-
 		}
 		return 0;
 	}
 	
 	public void visualizeGrid(Cell[][] g)
 	{
-		for(int i = 0; i < m; i++)
+		for(int i = 0; i < g.length; i++)
 		{
-			for(int j = 0; j < n; j++)
+			for(int j = 0; j < g[i].length; j++)
 			{
-				if(i==m-1 && j==n-1)
+				if(i == m-1 && j == n-1)
 				{
 					System.out.print("[J]"); break;
 				}
@@ -578,7 +621,7 @@ public class SaveWesteros extends GenericSearchProblem
 				{
 				switch(g[j][i].type)
 				{
-					case EMPTY: System.out.print("[O]"); break;
+					case EMPTY: System.out.print("[E]"); break;
 					case WHITE_WALKER: System.out.print("[W]"); break;
 					case OBSTACLE: System.out.print("[X]"); break;
 					case DRAGON_STONE: System.out.print("[D]"); break;
@@ -622,7 +665,8 @@ public class SaveWesteros extends GenericSearchProblem
 			if(grid[x][y] == null) 
 			{
 				grid[x][y] = new Cell(CellType.WHITE_WALKER);
-			}else
+			}
+			else
 			{
 				i--;
 			}
@@ -636,14 +680,15 @@ public class SaveWesteros extends GenericSearchProblem
 			if(grid[x][y] == null) 
 			{
 				grid[x][y] = new Cell(CellType.OBSTACLE);
-			}else
+			}
+			else
 			{
 				i--;
 			}
 		}
 		
-		for (int i = 0; i < m; i++) {
-			for (int j = 0; j < n; j++) {
+		for (int i = 0; i < grid.length; i++) {
+			for (int j = 0; j < grid[i].length; j++) {
 				if(grid[i][j] == null) {
 					grid[i][j] = new Cell(CellType.EMPTY);
 				}
@@ -651,9 +696,6 @@ public class SaveWesteros extends GenericSearchProblem
 			}
 		}
 	}
-
-	
-	
 
 	public void genGridStatic()
 	{
@@ -663,25 +705,23 @@ public class SaveWesteros extends GenericSearchProblem
 		
 		grid = new Cell[m][n];
 		
-		grid[3][2] = new Cell(CellType.DRAGON_STONE);
-		
+		grid[3][2] = new Cell(CellType.DRAGON_STONE);		
 		grid[1][1] = new Cell(CellType.WHITE_WALKER);
 		grid[1][2] = new Cell(CellType.WHITE_WALKER);
 		grid[2][1] = new Cell(CellType.WHITE_WALKER);
-	
-	
 		grid[0][0] = new Cell(CellType.OBSTACLE);
-	
 		
 		for (int i = 0; i < m; i++) {
 			for (int j = 0; j < n; j++) {
 				if(grid[i][j] == null) {
 					grid[i][j] = new Cell(CellType.EMPTY);
-				}
-				
+				}			
 			}
 		}
-	
 	}
 
+	public static void main(String[] args) {
+		ResultObject result = search(grid, QueuingFunction.A_STAR, true);
+		System.out.println(result);
+	}
 }

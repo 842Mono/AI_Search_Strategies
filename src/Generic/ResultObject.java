@@ -6,6 +6,7 @@ public class ResultObject
 {
 	boolean solution;
 	public ArrayList<Operator> operators;
+	public ArrayList<Node> nodes;
 	public int cost;
 	public int numberOfNodes;
 	
