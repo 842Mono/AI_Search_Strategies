@@ -21,16 +21,23 @@ public class SaveWesteros extends GenericSearchProblem
 	
 	public SaveWesteros()
 	{
+		//Generate a random grid of size (4*4)
 		genGrid();
+		//Visualize the initial Grid
 		visualizeGrid(grid);
 		
 		ArrayList<Node> firstState = new ArrayList<Node>();
+		
+		//Assigns the right bottom cell in the grid for the player
 		firstState.add(genPlayer());
+		
 		ArrayList<Operator> actions = new ArrayList<Operator>();
 		actions.add(Action.KILL);
 		actions.add(Action.ROTATE_LEFT);
 		actions.add(Action.FORWARD);
 		actions.add(Action.ROTATE_RIGHT);
+		
+		//This calls a method in the genericSearchProblem class that initializes values and begins the queue with the player node which is the root.
 		this.initValues(firstState, actions);
 	}
 	
@@ -201,7 +208,7 @@ public class SaveWesteros extends GenericSearchProblem
 		if(resultantState != null)
 		{
 			numberOfNodes++;
-			resultantState.heuristic = estimateHeuristic2(resultantState);
+			resultantState.heuristic = estimateHeuristicGreedy(resultantState);
 		}
 		return resultantState;
 	}
@@ -218,7 +225,7 @@ public class SaveWesteros extends GenericSearchProblem
 			}
 		}
 		State s = new State(null,null, new Point(m-1,n-1), Orientation.NORTH,0,wwPositions,0);
-		s.heuristic = estimateHeuristic2(s);
+		s.heuristic = estimateHeuristicGreedy(s);
 		return s;
 	}
 	
@@ -301,30 +308,6 @@ public class SaveWesteros extends GenericSearchProblem
 		}
 		
 		heuristic *= 3;
-		
-		
-//		if
-//		(
-//			   (state.operator == Action.ROTATE_LEFT || state.operator == Action.ROTATE_RIGHT)
-//			&& (state.parent != null
-//			&& (state.parent.operator == Action.ROTATE_LEFT || state.parent.operator == Action.ROTATE_RIGHT))
-//			&& (state.parent.parent != null
-//			&& (state.parent.parent.operator == Action.ROTATE_LEFT || state.parent.parent.operator == Action.ROTATE_RIGHT))
-//		)
-//			heuristic += 25;
-		
-//		if
-//		(
-//			(state.operator == Action.ROTATE_LEFT && state.parent != null && state.parent.operator == Action.ROTATE_RIGHT)
-//			|| (state.operator == Action.ROTATE_RIGHT && state.parent != null && state.parent.operator == Action.ROTATE_LEFT)
-//		)
-//			heuristic += 100;
-//		if
-//		(
-//			(state.operator == Action.ROTATE_LEFT && state.parent != null && state.parent.operator == Action.ROTATE_LEFT && state.parent.parent != null && state.parent.parent.operator == Action.ROTATE_LEFT)
-//			|| (state.operator == Action.ROTATE_RIGHT && state.parent != null && state.parent.operator == Action.ROTATE_RIGHT && state.parent.parent != null && state.parent.parent.operator == Action.ROTATE_RIGHT)
-//		)
-//			heuristic += 100;
 		
 		return heuristic;
 	}
@@ -724,7 +707,7 @@ public class SaveWesteros extends GenericSearchProblem
 	}
 
 	public static void main(String[] args) {
-		ResultObject result = search(grid, QueuingFunction.ITERATIVE_DEEPENING, true);
+		ResultObject result = search(grid, QueuingFunction.GREEDY_SEARCH, false);
 		System.out.println(result);
 	}
 }
