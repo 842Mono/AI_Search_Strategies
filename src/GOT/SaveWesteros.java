@@ -11,8 +11,8 @@ import Generic.ResultObject;
 public class SaveWesteros extends GenericSearchProblem
 {
 	public static Cell[][] grid;
-	int m;
-	int n;
+	static int m;
+	static int n;
 	int randomWW;
 	int inventory;
 	State player;
@@ -21,7 +21,7 @@ public class SaveWesteros extends GenericSearchProblem
 	
 	public SaveWesteros()
 	{
-		genGrid();
+		genGridStatic();
 		visualizeGrid(grid);
 		
 		ArrayList<Node> firstState = new ArrayList<Node>();
@@ -68,9 +68,9 @@ public class SaveWesteros extends GenericSearchProblem
 			
 		System.out.println();
 			
-		for(int i = 0; i < grid.length; i++)
+		for(int i = 0; i < n; i++)
 		{
-			for(int j = 0; j < grid[i].length; j++)
+			for(int j = 0; j < m; j++)
 			{
 				switch(grid[j][i].type)
 				{
@@ -195,7 +195,7 @@ public class SaveWesteros extends GenericSearchProblem
 				break;
 			case KILL:
 				resultantState = kill(state); break;
-			default: throw new Error("offf");
+			default: throw new Error("invalid operator");
 		}
 		
 		if(resultantState != null)
@@ -217,7 +217,7 @@ public class SaveWesteros extends GenericSearchProblem
 				}
 			}
 		}
-		State s = new State(null,null, new Point(m-1,n-1), Orientation.NORTH,0,wwPositions,0);
+		State s = new State(null, null, new Point(m-1,n-1), Orientation.NORTH, 0, wwPositions, 0);
 		s.heuristic = estimateHeuristic2(s);
 		return s;
 	}
@@ -302,30 +302,6 @@ public class SaveWesteros extends GenericSearchProblem
 		
 		heuristic *= 3;
 		
-		
-//		if
-//		(
-//			   (state.operator == Action.ROTATE_LEFT || state.operator == Action.ROTATE_RIGHT)
-//			&& (state.parent != null
-//			&& (state.parent.operator == Action.ROTATE_LEFT || state.parent.operator == Action.ROTATE_RIGHT))
-//			&& (state.parent.parent != null
-//			&& (state.parent.parent.operator == Action.ROTATE_LEFT || state.parent.parent.operator == Action.ROTATE_RIGHT))
-//		)
-//			heuristic += 25;
-		
-//		if
-//		(
-//			(state.operator == Action.ROTATE_LEFT && state.parent != null && state.parent.operator == Action.ROTATE_RIGHT)
-//			|| (state.operator == Action.ROTATE_RIGHT && state.parent != null && state.parent.operator == Action.ROTATE_LEFT)
-//		)
-//			heuristic += 100;
-//		if
-//		(
-//			(state.operator == Action.ROTATE_LEFT && state.parent != null && state.parent.operator == Action.ROTATE_LEFT && state.parent.parent != null && state.parent.parent.operator == Action.ROTATE_LEFT)
-//			|| (state.operator == Action.ROTATE_RIGHT && state.parent != null && state.parent.operator == Action.ROTATE_RIGHT && state.parent.parent != null && state.parent.parent.operator == Action.ROTATE_RIGHT)
-//		)
-//			heuristic += 100;
-		
 		return heuristic;
 	}
 			
@@ -400,7 +376,6 @@ public class SaveWesteros extends GenericSearchProblem
 					currentState.dragonStones - 1,
 					killed,
 					currentState.depth+1
-//					currentState.totalCost + cost
 				);
 			}
 		}
@@ -427,7 +402,6 @@ public class SaveWesteros extends GenericSearchProblem
 				inventory,
 				currentState.remainingWW,
 				currentState.depth+1
-//				currentState.totalCost
 			);
 		
 		return new State
@@ -439,7 +413,6 @@ public class SaveWesteros extends GenericSearchProblem
 			currentState.dragonStones,
 			currentState.remainingWW,
 			currentState.depth+1
-//			currentState.totalCost
 		);
 	}
 
@@ -464,7 +437,6 @@ public class SaveWesteros extends GenericSearchProblem
 				inventory,
 				currentState.remainingWW,
 				currentState.depth+1
-//				currentState.totalCost
 			);
 		
 		return new State
@@ -476,7 +448,6 @@ public class SaveWesteros extends GenericSearchProblem
 			currentState.dragonStones,
 			currentState.remainingWW,
 			currentState.depth+1
-//			currentState.totalCost
 		);
 	}
 	
@@ -501,7 +472,6 @@ public class SaveWesteros extends GenericSearchProblem
 				inventory,
 				currentState.remainingWW,
 				currentState.depth+1
-//				currentState.totalCost
 			);
 		
 		return new State
@@ -513,7 +483,6 @@ public class SaveWesteros extends GenericSearchProblem
 			currentState.dragonStones,
 			currentState.remainingWW,
 			currentState.depth+1
-//			currentState.totalCost
 		);
 	}
 	
@@ -539,7 +508,6 @@ public class SaveWesteros extends GenericSearchProblem
 				inventory,
 				currentState.remainingWW,
 				currentState.depth+1
-//				currentState.totalCost
 			);
 		}
 		
@@ -551,7 +519,6 @@ public class SaveWesteros extends GenericSearchProblem
 			Orientation.WEST,
 			currentState.dragonStones,
 			currentState.remainingWW,
-//			currentState.totalCost,
 			currentState.depth+1
 		);
 	}
@@ -612,11 +579,11 @@ public class SaveWesteros extends GenericSearchProblem
 	
 	public void visualizeGrid(Cell[][] g)
 	{
-		for(int i = 0; i < g.length; i++)
+		for(int i = 0; i < n; i++)
 		{
-			for(int j = 0; j < g[i].length; j++)
+			for(int j = 0; j < m; j++)
 			{
-				if(i == m-1 && j == n-1)
+				if(i == n-1 && j == m-1)
 				{
 					System.out.print("[J]"); break;
 				}
@@ -638,21 +605,18 @@ public class SaveWesteros extends GenericSearchProblem
 	
 	public void genGrid()
 	{
-		m = 4;
-		n = 4;
-		int WWMaxNumber = 5;
-		int ObstaclesMaxNumber = 4;
-//		int random = (int)(Math.random()*7)+4;
-		
+		m = (int)(Math.random()*4)+4;
+		n = (int)(Math.random()*4)+4;
+		int WWMaxNumber = (int)((m*n) / 3);
+		int ObstaclesMaxNumber = (int)((m*n) / 3);
+
 		inventory = (int)(Math.random()*4)+((m*n)-6);
 		System.out.println("Inventory = " + inventory);
 		
 		grid = new Cell[m][n];
 		
-		
-		int dsl = (int)(Math.random()*(m*n - 1));
-		int x = dsl/m;
-		int y = dsl%n;
+		int x = (int)(Math.random()*m);
+		int y = (int)(Math.random()*n);
 		System.out.println(x + " " + y);
 		
 		grid[x][y] = new Cell(CellType.DRAGON_STONE);
@@ -662,9 +626,8 @@ public class SaveWesteros extends GenericSearchProblem
 
 		for (int i = 0; i < randomWW ; i++) 
 		{
-			dsl = (int)(Math.random()*(m*n - 1));
-			x = dsl/m;
-			y = dsl%n;
+			x = (int)(Math.random()*m);
+			y = (int)(Math.random()*n);
 			if(grid[x][y] == null) 
 			{
 				grid[x][y] = new Cell(CellType.WHITE_WALKER);
@@ -677,9 +640,8 @@ public class SaveWesteros extends GenericSearchProblem
 		
 		for (int i = 0; i <randomObstacles ; i++) 
 		{
-			dsl = (int)(Math.random()*(m*n - 1));
-			x = dsl/m;
-			y = dsl%n;
+			x = (int)(Math.random()*m);
+			y = (int)(Math.random()*n);
 			if(grid[x][y] == null) 
 			{
 				grid[x][y] = new Cell(CellType.OBSTACLE);
@@ -722,9 +684,35 @@ public class SaveWesteros extends GenericSearchProblem
 			}
 		}
 	}
+	
+	public void genGridStatic2()
+	{
+		m = 4;
+		n = 4;
+		inventory = (int)(Math.random()*4)+30;
+		
+		grid = new Cell[m][n];
+		
+		grid[2][0] = new Cell(CellType.DRAGON_STONE);
+		
+		grid[0][3] = new Cell(CellType.WHITE_WALKER);
+		grid[2][3] = new Cell(CellType.WHITE_WALKER);
+		grid[0][2] = new Cell(CellType.WHITE_WALKER);
+		grid[2][2] = new Cell(CellType.WHITE_WALKER);
+		
+		grid[0][0] = new Cell(CellType.OBSTACLE);
+		
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				if(grid[i][j] == null) {
+					grid[i][j] = new Cell(CellType.EMPTY);
+				}			
+			}
+		}
+	}
 
 	public static void main(String[] args) {
-		ResultObject result = search(grid, QueuingFunction.ITERATIVE_DEEPENING, true);
+		ResultObject result = search(grid, QueuingFunction.BREADTH_FIRST_SEARCH, true);
 		System.out.println(result);
 	}
 }

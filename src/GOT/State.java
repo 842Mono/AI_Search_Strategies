@@ -22,7 +22,6 @@ public class State extends Node
 		int dragonStones,
 		ArrayList<Point> remainingWW,
 		int depth
-//		int heuristic
 	)
 	{
 		super(parent, operator, 0, depth);
@@ -60,6 +59,7 @@ public class State extends Node
 	
 	public ArrayList<Point> killWhiteWalkers(int x, int y)
 	{
+		@SuppressWarnings("unchecked")
 		ArrayList<Point> newArrayList = (ArrayList<Point>)remainingWW.clone();
 		
 		for(int i = 0; i < newArrayList.size(); ++i)
