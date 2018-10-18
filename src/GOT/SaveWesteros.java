@@ -25,12 +25,17 @@ public class SaveWesteros extends GenericSearchProblem
 		visualizeGrid(grid);
 		
 		ArrayList<Node> firstState = new ArrayList<Node>();
+		
+		//Assigns the right bottom cell in the grid for the player
 		firstState.add(genPlayer());
+		
 		ArrayList<Operator> actions = new ArrayList<Operator>();
 		actions.add(Action.KILL);
 		actions.add(Action.ROTATE_LEFT);
 		actions.add(Action.FORWARD);
 		actions.add(Action.ROTATE_RIGHT);
+		
+		//This calls a method in the genericSearchProblem class that initializes values and begins the queue with the player node which is the root.
 		this.initValues(firstState, actions);
 	}
 	
