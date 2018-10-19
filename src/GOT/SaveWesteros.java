@@ -11,8 +11,8 @@ import Generic.ResultObject;
 public class SaveWesteros extends GenericSearchProblem
 {
 	public static Cell[][] grid;
-	int m;
-	int n;
+	static int m;
+	static int n;
 	int randomWW;
 	int inventory;
 	State player;
@@ -21,9 +21,7 @@ public class SaveWesteros extends GenericSearchProblem
 	
 	public SaveWesteros()
 	{
-		//Generate a random grid of size (4*4)
-		genGrid();
-		//Visualize the initial Grid
+		genGridStatic();
 		visualizeGrid(grid);
 		
 		ArrayList<Node> firstState = new ArrayList<Node>();
@@ -75,9 +73,9 @@ public class SaveWesteros extends GenericSearchProblem
 			
 		System.out.println();
 			
-		for(int i = 0; i < grid.length; i++)
+		for(int i = 0; i < n; i++)
 		{
-			for(int j = 0; j < grid[i].length; j++)
+			for(int j = 0; j < m; j++)
 			{
 				switch(grid[j][i].type)
 				{
@@ -202,7 +200,7 @@ public class SaveWesteros extends GenericSearchProblem
 				break;
 			case KILL:
 				resultantState = kill(state); break;
-			default: throw new Error("offf");
+			default: throw new Error("invalid operator");
 		}
 		
 		if(resultantState != null)
@@ -224,7 +222,7 @@ public class SaveWesteros extends GenericSearchProblem
 				}
 			}
 		}
-		State s = new State(null,null, new Point(m-1,n-1), Orientation.NORTH,0,wwPositions,0);
+		State s = new State(null, null, new Point(m-1,n-1), Orientation.NORTH, 0, wwPositions, 0);
 		s.heuristic = estimateHeuristic2(s);
 		return s;
 	}
@@ -383,7 +381,6 @@ public class SaveWesteros extends GenericSearchProblem
 					currentState.dragonStones - 1,
 					killed,
 					currentState.depth+1
-//					currentState.totalCost + cost
 				);
 			}
 		}
@@ -410,7 +407,6 @@ public class SaveWesteros extends GenericSearchProblem
 				inventory,
 				currentState.remainingWW,
 				currentState.depth+1
-//				currentState.totalCost
 			);
 		
 		return new State
@@ -422,7 +418,6 @@ public class SaveWesteros extends GenericSearchProblem
 			currentState.dragonStones,
 			currentState.remainingWW,
 			currentState.depth+1
-//			currentState.totalCost
 		);
 	}
 
@@ -447,7 +442,6 @@ public class SaveWesteros extends GenericSearchProblem
 				inventory,
 				currentState.remainingWW,
 				currentState.depth+1
-//				currentState.totalCost
 			);
 		
 		return new State
@@ -459,7 +453,6 @@ public class SaveWesteros extends GenericSearchProblem
 			currentState.dragonStones,
 			currentState.remainingWW,
 			currentState.depth+1
-//			currentState.totalCost
 		);
 	}
 	
@@ -484,7 +477,6 @@ public class SaveWesteros extends GenericSearchProblem
 				inventory,
 				currentState.remainingWW,
 				currentState.depth+1
-//				currentState.totalCost
 			);
 		
 		return new State
@@ -496,7 +488,6 @@ public class SaveWesteros extends GenericSearchProblem
 			currentState.dragonStones,
 			currentState.remainingWW,
 			currentState.depth+1
-//			currentState.totalCost
 		);
 	}
 	
@@ -522,7 +513,6 @@ public class SaveWesteros extends GenericSearchProblem
 				inventory,
 				currentState.remainingWW,
 				currentState.depth+1
-//				currentState.totalCost
 			);
 		}
 		
@@ -534,7 +524,6 @@ public class SaveWesteros extends GenericSearchProblem
 			Orientation.WEST,
 			currentState.dragonStones,
 			currentState.remainingWW,
-//			currentState.totalCost,
 			currentState.depth+1
 		);
 	}
@@ -621,22 +610,19 @@ public class SaveWesteros extends GenericSearchProblem
 	
 	public void genGrid()
 	{
-		m = 4;
-		n = 4;
-		int WWMaxNumber = 5;
-		int ObstaclesMaxNumber = 4;
-//		int random = (int)(Math.random()*7)+4;
-		
+		m = (int)(Math.random()*4)+4;
+		n = (int)(Math.random()*4)+4;
+		int WWMaxNumber = (int)((m*n) / 3);
+		int ObstaclesMaxNumber = (int)((m*n) / 3);
+
 		inventory = (int)(Math.random()*4)+((m*n)-6);
 		System.out.println("Inventory = " + inventory);
 		
 		grid = new Cell[m][n];
 		
-		
-		int dsY = (int)(Math.random()*m);
-		int dsX = (int)(Math.random()*n);
-		int x = dsY;
-		int y = dsX;
+		int x = (int)(Math.random()*m);
+		int y = (int)(Math.random()*n);
+
 		System.out.println(x + " " + y);
 		
 		grid[x][y] = new Cell(CellType.DRAGON_STONE);
@@ -646,10 +632,8 @@ public class SaveWesteros extends GenericSearchProblem
 
 		for (int i = 0; i < randomWW ; i++) 
 		{
-			 dsY = (int)(Math.random()*m);
-			 dsX = (int)(Math.random()*n);
-			 x = dsY;
-			 y = dsX;
+			x = (int)(Math.random()*m);
+			y = (int)(Math.random()*n);
 			if(grid[x][y] == null) 
 			{
 				grid[x][y] = new Cell(CellType.WHITE_WALKER);
@@ -662,10 +646,8 @@ public class SaveWesteros extends GenericSearchProblem
 		
 		for (int i = 0; i <randomObstacles ; i++) 
 		{
-			dsY = (int)(Math.random()*m);
-			 dsX = (int)(Math.random()*n);
-			 x = dsY;
-			 y = dsX;
+			x = (int)(Math.random()*m);
+			y = (int)(Math.random()*n);
 			if(grid[x][y] == null) 
 			{
 				grid[x][y] = new Cell(CellType.OBSTACLE);
@@ -736,7 +718,7 @@ public class SaveWesteros extends GenericSearchProblem
 	}
 
 	public static void main(String[] args) {
-		ResultObject result = search(grid, QueuingFunction.GREEDY_SEARCH, false);
+		ResultObject result = search(grid, QueuingFunction.BREADTH_FIRST_SEARCH, true);
 		System.out.println(result);
 	}
 }

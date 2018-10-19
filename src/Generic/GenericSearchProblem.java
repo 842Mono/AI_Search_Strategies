@@ -7,12 +7,26 @@ public abstract class GenericSearchProblem
 	ArrayList<Operator> operators;
 	QueuingFunction queuingFunction;
 	
+	public GenericSearchProblem() {}
+	
+	public GenericSearchProblem
+	(
+		Node initial,
+		ArrayList<Operator> operators
+	)
+	{
+		this.queue = new ArrayList<Node>();
+		this.queue.add(initial);
+		this.operators = operators;
+	}
+	
 	public void initValues(ArrayList<Node> queue, ArrayList<Operator> operators) //, QueuingFunction qf)
 	{
 		this.queue = queue;
 		this.operators = operators;
 	}
 	
+	// abstract methods
 	public abstract Node stateSpace(Node node, Operator operator);
 	public abstract boolean goalTest(Node node);
 	public abstract int pathCostFunction(Node node);
@@ -71,8 +85,9 @@ public abstract class GenericSearchProblem
 		for(int i = 0; i < operators.size(); i++)
 		{
 			Node child = stateSpace(firstNode, operators.get(i));
-			if(child != null)
-				queue.add(0,child);
+			if(child != null){
+					queue.add(0,child);
+			}
 		}
 	}
 	
@@ -144,9 +159,16 @@ public abstract class GenericSearchProblem
 			queue.sort((o1, o2) -> o1.heuristic + o1.totalCost < o2.heuristic + o2.totalCost ? -1 : 1);
 	}
 	
+	/*
+	 * General Search method representing searching by the input strategy
+	 * @parameters 
+	 * problem : search problem to be solved
+	 * strategy: search strategy applied to solve the problem
+	 */
 	public ResultObject GeneralSearchProcedure(GenericSearchProblem problem, QueuingFunction strategy){
 		int iterativeDeepeningLevel = 0;
 		Node root = queue.get(0);
+		
 		while(true)
 		{
 			if(queue.size() == 0)
@@ -207,21 +229,7 @@ public abstract class GenericSearchProblem
 		{
 			sequence.add(0, node);
 			this.backtrack(node.parent, sequence);
-//			System.out.println(node.totalCost);
 		}
 		return sequence;
-	}
-	
-	public GenericSearchProblem() {}
-	
-	public GenericSearchProblem
-	(
-		Node initial,
-		ArrayList<Operator> operators
-	)
-	{
-		this.queue = new ArrayList<Node>();
-		this.queue.add(initial);
-		this.operators = operators;
 	}
 }
